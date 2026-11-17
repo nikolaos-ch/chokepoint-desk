@@ -17,7 +17,7 @@ brief/
 secrets/
 
 # Large raw caches (processed JSON under data/ IS committed)
-data/raw/
+# data/raw/ is committed (small CSV; fetch script refuses to shrink history against it)
 data/ais/
 *.parquet
 *.sqlite

@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chokepoint Desk</title>
+  <meta name="description" content="Daily ship transits through the Strait of Hormuz and Bab el-Mandeb: what was measured, a 7-day forecast, the rules that settle the count, and a ledger of claimed vs confirmed incidents. Every number dated.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#f6f6f4" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#121211" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0b0b'/%3E%3Cpath d='M6 22h4V12h-4zM12 22h4V8h-4zM18 22h4V15h-4zM24 22h2V18h-2z' fill='%23fcfcfb'/%3E%3C/svg%3E">
+  <link rel="preload" href="data/transits/hormuz.json" as="fetch" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="masthead">
+    <div class="wrap masthead__inner">
+      <div class="brand">
+        <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6"/><path d="M6 22h4V12h-4zM12 22h4V8h-4zM18 22h4V15h-4zM24 22h2V18h-2z"/></svg>
+        <div>
+          <p class="brand__name">Chokepoint Desk</p>
+          <p class="brand__tag">What was measured, what was claimed, and what settles the count.</p>
+        </div>
+      </div>
+      <fieldset class="switcher" aria-label="Strait">
+        <legend class="sr-only">Choose a strait</legend>
+        <label><input type="radio" name="strait" value="hormuz" checked><span>Hormuz</span></label>
+        <label><input type="radio" name="strait" value="bab_el_mandeb"><span>Bab el-Mandeb</span></label>
+      </fieldset>
+    </div>
+  </header>
+
+  <main id="main" class="wrap" tabindex="-1">
+    <div id="mock-banner" class="notice" hidden role="note">
+      <strong>Mock data.</strong> <span id="mock-text"></span>
+    </div>
+
+    <section class="intro" aria-labelledby="strait-title">
+      <h1 id="strait-title">Strait of Hormuz</h1>
+      <p id="data-stamp" class="stamp">Loading data…</p>
+    </section>
+
+    <!-- A. Transit counter -->
+    <section class="panel" id="panel-a" aria-labelledby="a-title">
+      <header class="panel__head">
+        <p class="panel__kicker">A · Measured</p>
+        <h2 id="a-title">Daily transits</h2>
+        <p class="panel__lede">Ships counted passing through the strait each day, by ship type, with the 7-day average.</p>
+      </header>
+      <div class="tiles" id="a-tiles"></div>
+      <div class="chart-controls">
+        <div class="seg" role="group" aria-label="Time range">
+          <button type="button" data-range="30">30 days</button>
+          <button type="button" data-range="90" aria-pressed="true">90 days</button>
+          <button type="button" data-range="all">All</button>
+        </div>
+      </div>
+      <div class="legend" id="a-legend"></div>
+      <div class="chart" id="a-chart" tabindex="0"></div>
+      <p class="chart-note" id="a-note"></p>
+      <details class="table-toggle">
+        <summary>Show the numbers</summary>
+        <div class="table-scroll" id="a-table"></div>
+      </details>
+    </section>
+
+    <!-- Forecast -->
+    <section class="panel" id="panel-f" aria-labelledby="f-title">
+      <header class="panel__head">
+        <p class="panel__kicker">Forecast</p>
+        <h2 id="f-title">Next 7 days</h2>
+        <p class="panel__lede">A likely range for daily transits, not a promise. The shaded band holds the middle 80% of outcomes the model expects.</p>
+      </header>
+      <div id="f-body"></div>
+    </section>
+
+    <!-- B. What settles it -->
+    <section class="panel" id="panel-b" aria-labelledby="b-title">
+      <header class="panel__head">
+        <p class="panel__kicker">B · Rules</p>
+        <h2 id="b-title">What settles it</h2>
+        <p class="panel__lede">The headline is not the contract. These are the exact rules that decide the ship-count questions, each stamped with the day it was read.</p>
+      </header>
+      <div class="countdown" id="b-countdown" aria-live="off"></div>
+      <div id="b-rules" class="rules"></div>
+    </section>
+
+    <!-- C. Claimed vs confirmed -->
+    <section class="panel" id="panel-c" aria-labelledby="c-title">
+      <header class="panel__head">
+        <p class="panel__kicker">C · Claims</p>
+        <h2 id="c-title">Claimed vs confirmed</h2>
+        <p class="panel__lede">Reported incidents near the strait, with who made each claim and whether anyone independent has backed it.</p>
+      </header>
+      <ul class="status-key" aria-label="Status meanings">
+        <li><span class="chip chip--claimed_only"><span class="chip__icon" aria-hidden="true"></span>Claimed only</span> Stated by one party, nothing independent yet.</li>
+        <li><span class="chip chip--third_party_report"><span class="chip__icon" aria-hidden="true"></span>Third-party report</span> An independent body (e.g. UKMTO, JMIC) reported it.</li>
+        <li><span class="chip chip--confirmed"><span class="chip__icon" aria-hidden="true"></span>Confirmed</span> Independently confirmed by more than one source.</li>
+      </ul>
+      <div id="c-summary" class="ledger-summary"></div>
+      <div id="c-ledger"></div>
+    </section>
+
+    <!-- How to read this -->
+    <section class="panel panel--limits" aria-labelledby="h-title">
+      <header class="panel__head">
+        <p class="panel__kicker">Limits</p>
+        <h2 id="h-title">How to read this</h2>
+      </header>
+      <ul class="limits">
+        <li><strong>Counts come from AIS signals.</strong> Ships that switch off or spoof their transponder ("dark" ships) are missed or misplaced, so the true number of passages can be higher than shown.</li>
+        <li><strong>Data arrives late.</strong> IMF PortWatch publishes weekly, on Tuesdays around 9 AM New York time, and the latest days can be revised. Every count on this page shows the day it refers to.</li>
+        <li><strong>A claim is not a confirmation.</strong> "Claimed only" means one party said it; it is not evidence that it happened. Each row names who said it and links the source.</li>
+        <li><strong>The forecast is a range.</strong> Real counts fall outside the shaded band about one day in five, more often when events move fast.</li>
+        <li><strong>Rules can change.</strong> Settlement rules are copied by hand and dated. Always re-read the venue's own text.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p><strong>Not financial advice.</strong> This page reports data and published rules; it makes no recommendation of any kind.</p>
+      <p>Chokepoint Desk is an independent project. It is not affiliated with, or endorsed by, Aureum.</p>
+      <p class="footer__src">Transit data: IMF PortWatch, Daily Chokepoints Data. Incident sources are linked row by row.</p>
+    </div>
+  </footer>
+
+  <div class="tooltip" id="tooltip" role="status" hidden></div>
+  <noscript><p class="wrap notice">This page needs JavaScript to draw its charts. The raw data is in the <a href="data/">data folder</a>.</p></noscript>
+</body>
+</html>

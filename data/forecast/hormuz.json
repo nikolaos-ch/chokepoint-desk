@@ -1,0 +1,96 @@
+{
+ "strait": "hormuz",
+ "issued_at": "2026-11-17T07:00:00Z",
+ "regime": "contested",
+ "regime_reasons": [
+  "MOCK: 7-day average is 26% below the 90-day average",
+  "MOCK: third-party incident reports in the last 7 days"
+ ],
+ "horizon_days": 7,
+ "daily": [
+  {
+   "date": "2026-11-16",
+   "p10": 54.3,
+   "p50": 63.1,
+   "p90": 72
+  },
+  {
+   "date": "2026-11-17",
+   "p10": 53,
+   "p50": 63.1,
+   "p90": 73.2
+  },
+  {
+   "date": "2026-11-18",
+   "p10": 51.8,
+   "p50": 63.1,
+   "p90": 74.5
+  },
+  {
+   "date": "2026-11-19",
+   "p10": 50.5,
+   "p50": 63.1,
+   "p90": 75.8
+  },
+  {
+   "date": "2026-11-20",
+   "p10": 49.3,
+   "p50": 63.1,
+   "p90": 77
+  },
+  {
+   "date": "2026-11-21",
+   "p10": 48,
+   "p50": 63.1,
+   "p90": 78.3
+  },
+  {
+   "date": "2026-11-22",
+   "p10": 46.7,
+   "p50": 63.1,
+   "p90": 79.6
+  }
+ ],
+ "weekly_total": {
+  "p10": 376,
+  "p50": 442,
+  "p90": 508
+ },
+ "by_type": {
+  "container": {
+   "p10": 58,
+   "p50": 73,
+   "p90": 88
+  },
+  "dry_bulk": {
+   "p10": 73,
+   "p50": 91,
+   "p90": 109
+  },
+  "general_cargo": {
+   "p10": 46,
+   "p50": 58,
+   "p90": 70
+  },
+  "roro": {
+   "p10": 14,
+   "p50": 18,
+   "p90": 22
+  },
+  "tanker": {
+   "p10": 162,
+   "p50": 202,
+   "p90": 242
+  }
+ },
+ "backtest": {
+  "mae_model": 6.8,
+  "mae_naive": 9.4,
+  "coverage_80": 0.78,
+  "window": {
+   "start": "2026-05-01",
+   "end": "2026-11-08"
+  }
+ },
+ "method_note": "MOCK forecast for layout only. Real method note will come from the model (#3)."
+}

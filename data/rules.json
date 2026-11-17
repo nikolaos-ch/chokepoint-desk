@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-11-17",
+  "note": "Hand-curated by the analyst. One row per market family. The row marked example:true is a template: replace it with rules read from the venue's own rule page, and stamp read_on with the day you read them.",
+  "rules": [
+    {
+      "id": "example-hormuz-weekly",
+      "example": true,
+      "strait": "hormuz",
+      "venue": "EXAMPLE venue",
+      "market_family": "EXAMPLE: weekly Hormuz transit count",
+      "settlement_source": "IMF PortWatch, Daily Chokepoints Data",
+      "field": "n_total (daily transit calls, all vessel types)",
+      "aggregation": "Average of the daily values over the window",
+      "comparison": ">=",
+      "threshold": 60,
+      "window": "EXAMPLE: Monday to Sunday, UTC dates",
+      "window_start": "2026-11-16",
+      "window_end": "2026-11-22",
+      "earliest_settlement": "2026-11-24",
+      "url": "https://portwatch.imf.org/",
+      "read_on": "2026-11-17",
+      "notes": "EXAMPLE row. Replace with the exact wording of the rule. Note whether the threshold is 'at least' (>=) or 'more than' (>)."
+    }
+  ]
+}

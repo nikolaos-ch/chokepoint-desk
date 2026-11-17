@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-11-17",
+  "window_days": 14,
+  "note": "Hand-curated by the analyst. Every row needs a date, a place, who made the claim, a status and at least one link. The row marked example:true is a template, not a real incident.",
+  "rows": [
+    {
+      "id": "example-001",
+      "example": true,
+      "strait": "hormuz",
+      "date": "2026-11-16",
+      "place": "EXAMPLE: about 20 nm north of Khasab",
+      "summary": "EXAMPLE: merchant vessel reported disabled after an unknown incident",
+      "claimed_by": "EXAMPLE: state media of a party to the conflict",
+      "independent_source": "EXAMPLE: UKMTO advisory",
+      "status": "third_party_report",
+      "links": [
+        { "label": "EXAMPLE: UKMTO advisories", "url": "https://www.ukmto.org/" }
+      ],
+      "verified_on": "2026-11-17"
+    }
+  ]
+}

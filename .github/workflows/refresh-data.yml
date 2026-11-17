@@ -35,6 +35,7 @@ jobs:
         run: |
           git config user.name "chokepoint-desk-bot"
           git config user.email "actions@users.noreply.github.com"
+          python scripts/commit_if_changed.py
           git add data/
           if git diff --cached --quiet; then
             echo "No data changes."
