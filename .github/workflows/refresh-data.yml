@@ -1,0 +1,45 @@
+name: Refresh data
+
+on:
+  schedule:
+    - cron: "30 6 * * *"      # daily 06:30 UTC
+    - cron: "15 14 * * 2"     # Tue 14:15 UTC = 9:15 AM EST (after PortWatch 9 AM ET publish)
+    - cron: "15 13 * * 2"     # Tue 13:15 UTC = 9:15 AM EDT
+    - cron: "45 15 * * 2"     # Tue retry, covers late publish
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - name: Install dependencies
+        run: |
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Run pipeline + forecast (restores last good data on failure)
+        run: ./scripts/refresh.sh
+      - name: Commit data if changed
+        run: |
+          git config user.name "chokepoint-desk-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/
+          if git diff --cached --quiet; then
+            echo "No data changes."
+          else
+            git commit -m "data: refresh $(date -u +%Y-%m-%dT%H:%MZ)"
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+            git push
+          fi
