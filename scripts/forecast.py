@@ -115,7 +115,9 @@ def load_incidents(ledger_path: Path, strait: str, end: pd.Timestamp) -> tuple[i
         if not (start <= d <= end):
             continue
         status = str(r.get("status", "")).lower()
-        if "claim" in status and "confirm" not in status:
+        # claimed_only, or no independent source named -> a claim, not counted
+        if ("claim" in status and "confirm" not in status) or (
+                "independent_source" in r and not r.get("independent_source")):
             claimed += 1
         else:
             confirmed += 1
@@ -316,9 +318,11 @@ def run_strait(strait: str, data_dir: Path, now: dt.datetime) -> dict:
         ft = forecast_series(s, test_idx, val_idx, issue_i)
         q = ft["pred"]
         sc = ft["scores"]
+        # p10/p50/p90 at the top level are 7-day totals (data/README.md contract);
+        # daily quantiles and per-type backtest are extra detail.
         by_type[t] = {
+            "p10": r1(q["w10"]), "p50": r1(q["w50"]), "p90": r1(q["w90"]),
             "daily": [{"date": d, "p10": r1(q["p10"]), "p50": r1(q["p50"]), "p90": r1(q["p90"])} for d in dates],
-            "weekly_total": {"p10": r1(q["w10"]), "p50": r1(q["w50"]), "p90": r1(q["w90"])},
             "method": "model" if ft["beats"] else "naive_baseline",
             "backtest": {
                 "mae_model": _rd(sc["model"]["mae"]), "mae_naive": _rd(sc[ft["naive_key"]]["mae"]),
@@ -383,7 +387,7 @@ def run_strait(strait: str, data_dir: Path, now: dt.datetime) -> dict:
             "coverage_80": _rd(sc[used]["coverage_80"]),
             "coverage_80_model": _rd(sc["model"]["coverage_80"]),
             "coverage_80_naive": _rd(sc[nk]["coverage_80"]),
-            "window": {"from": test_from, "to": test_to, "issue_dates": len(test_idx),
+            "window": {"start": test_from, "end": test_to, "issue_dates": len(test_idx),
                        "forecast_points": sc["model"]["n"], "horizons": "1-7 days"},
             "model_beats_naive": total["beats"],
             "verdict": verdict,

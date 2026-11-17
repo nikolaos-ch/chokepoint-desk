@@ -1,2 +1,6 @@
 # scripts/fetch_portwatch.py uses only the Python standard library (Python 3.9+).
 # No third-party packages are needed; add forecast/site dependencies below.
+
+# forecast (#3): scripts/forecast.py
+numpy>=1.26
+pandas>=2.1
