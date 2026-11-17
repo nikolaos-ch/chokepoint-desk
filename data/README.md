@@ -10,9 +10,14 @@ The page (`/index.html` + `/app.js`) reads **only** these JSON files. Dates are 
 | `rules.json` | analyst, by hand | B. What settles it |
 | `ledger.json` | analyst, by hand | C. Claimed vs confirmed |
 
-While a file's `source` / `method_note` contains the word `MOCK`, the page shows a
-"mock data" banner. The current transit and forecast files are mock files with the
-right shape; the pipeline overwrites them.
+If a transit file's `source` or a forecast's `method_note` contains the word `MOCK`, the
+page shows a "mock data" banner. (Real pipeline files from #2 / #3 replaced the mocks on
+17 Nov 2026.)
+
+Optional fields the page also uses when present: `forecast.baseline`
+(`{mean_per_day, label}`) becomes the reference line for straits without fixed lines
+(Bab el-Mandeb); `backtest.model_beats_naive` and `backtest.naive_kind`
+(`naive_ma7` | `naive_last`) drive the plain-words backtest text.
 
 ---
 
@@ -24,7 +29,7 @@ right shape; the pipeline overwrites them.
   "source": "IMF PortWatch, Daily Chokepoints Data",
   "fetched_at": "2026-11-17T06:00:00Z",
   "last_data_date": "2026-11-15",
-  "rows": [
+  "daily": [
     { "date": "2026-11-15", "total": 63,
       "by_type": { "container": 12, "dry_bulk": 15, "general_cargo": 8, "roro": 2, "tanker": 26 },
       "ma7": 63.1 }
@@ -32,7 +37,7 @@ right shape; the pipeline overwrites them.
 }
 ```
 
-- `rows` sorted oldest → newest. (The page also accepts the array under `daily` or `data`.)
+- Daily array under `daily` (what #2 writes); `rows` or `data` are accepted too. Any order; the page sorts by date.
 - `ma7` = mean of `total` over the 7 days ending on `date`; `null` while fewer than 7 days exist.
   If `ma7` is missing the page computes it.
 

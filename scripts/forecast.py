@@ -304,7 +304,7 @@ def run_strait(strait: str, data_dir: Path, now: dt.datetime) -> dict:
     test_start = max(0, last_eval - BACKTEST_DAYS + 1)
     val_start = max(0, test_start - VALIDATION_DAYS)
     test_idx = range(test_start, last_eval + 1)
-    val_idx = range(val_start, test_start)
+    val_idx = range(val_start, max(val_start, test_start - HORIZON))  # outcomes end before the test window
 
     total = forecast_series(y, test_idx, val_idx, issue_i)
     p = total["pred"]

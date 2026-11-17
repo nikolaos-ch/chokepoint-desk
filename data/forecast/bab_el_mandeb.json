@@ -1,95 +1,490 @@
 {
- "strait": "bab_el_mandeb",
- "issued_at": "2026-11-17T07:00:00Z",
- "regime": "open",
- "regime_reasons": [
-  "MOCK: 7-day average within the usual range of the last 90 days"
- ],
- "horizon_days": 7,
- "daily": [
-  {
-   "date": "2026-11-16",
-   "p10": 25.9,
-   "p50": 30.1,
-   "p90": 34.4
+  "strait": "bab_el_mandeb",
+  "issued_at": "2026-11-17T20:40:31Z",
+  "last_data_date": "2026-11-15",
+  "source": "IMF PortWatch, Daily Chokepoints Data (portwatch.imf.org)",
+  "regime": "contested",
+  "regime_reasons": [
+    "Bab el-Mandeb: 25.6 transits/day over the 7 days to 2026-11-15, 34% of the Jan-Oct 2023 average (before the Red Sea crisis) (74.6/day).",
+    "Traffic is between 10% and 70% of normal, so ships are passing but many are staying away or rerouting.",
+    "Trend: flat versus the 28 days before (within 15%).",
+    "0 independently reported incident(s) in the 7 days to 2026-11-15."
+  ],
+  "regime_history": [
+    {
+      "date": "2026-10-17",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-10-18",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-10-19",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-10-20",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-10-21",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-10-22",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-10-23",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-10-24",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-10-25",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-10-26",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-10-27",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-10-28",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-10-29",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-10-30",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-10-31",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-11-01",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-11-02",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-11-03",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-11-04",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-11-05",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-11-06",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-11-07",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-11-08",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-11-09",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-11-10",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-11-11",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-11-12",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-11-13",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-11-14",
+      "regime": "contested"
+    },
+    {
+      "date": "2026-11-15",
+      "regime": "contested"
+    }
+  ],
+  "horizon_days": 7,
+  "daily": [
+    {
+      "date": "2026-11-16",
+      "p10": 18.4,
+      "p50": 25.6,
+      "p90": 32.3
+    },
+    {
+      "date": "2026-11-17",
+      "p10": 18.4,
+      "p50": 25.6,
+      "p90": 32.3
+    },
+    {
+      "date": "2026-11-18",
+      "p10": 18.4,
+      "p50": 25.6,
+      "p90": 32.3
+    },
+    {
+      "date": "2026-11-19",
+      "p10": 18.4,
+      "p50": 25.6,
+      "p90": 32.3
+    },
+    {
+      "date": "2026-11-20",
+      "p10": 18.4,
+      "p50": 25.6,
+      "p90": 32.3
+    },
+    {
+      "date": "2026-11-21",
+      "p10": 18.4,
+      "p50": 25.6,
+      "p90": 32.3
+    },
+    {
+      "date": "2026-11-22",
+      "p10": 18.4,
+      "p50": 25.6,
+      "p90": 32.3
+    }
+  ],
+  "weekly_total": {
+    "p10": 154.5,
+    "p50": 179.0,
+    "p90": 202.0
   },
-  {
-   "date": "2026-11-17",
-   "p10": 25.3,
-   "p50": 30.1,
-   "p90": 35
+  "by_type": {
+    "container": {
+      "p10": 29.2,
+      "p50": 37.3,
+      "p90": 46.7,
+      "daily": [
+        {
+          "date": "2026-11-16",
+          "p10": 2.8,
+          "p50": 5.3,
+          "p90": 9.2
+        },
+        {
+          "date": "2026-11-17",
+          "p10": 2.8,
+          "p50": 5.3,
+          "p90": 9.2
+        },
+        {
+          "date": "2026-11-18",
+          "p10": 2.8,
+          "p50": 5.3,
+          "p90": 9.2
+        },
+        {
+          "date": "2026-11-19",
+          "p10": 2.8,
+          "p50": 5.3,
+          "p90": 9.2
+        },
+        {
+          "date": "2026-11-20",
+          "p10": 2.8,
+          "p50": 5.3,
+          "p90": 9.2
+        },
+        {
+          "date": "2026-11-21",
+          "p10": 2.8,
+          "p50": 5.3,
+          "p90": 9.2
+        },
+        {
+          "date": "2026-11-22",
+          "p10": 2.8,
+          "p50": 5.3,
+          "p90": 9.2
+        }
+      ],
+      "method": "model",
+      "backtest": {
+        "mae_model": 1.804,
+        "mae_naive": 1.844,
+        "coverage_80": 0.774
+      }
+    },
+    "dry_bulk": {
+      "p10": 45.1,
+      "p50": 59.7,
+      "p90": 66.1,
+      "daily": [
+        {
+          "date": "2026-11-16",
+          "p10": 5.0,
+          "p50": 8.5,
+          "p90": 11.2
+        },
+        {
+          "date": "2026-11-17",
+          "p10": 5.0,
+          "p50": 8.5,
+          "p90": 11.2
+        },
+        {
+          "date": "2026-11-18",
+          "p10": 5.0,
+          "p50": 8.5,
+          "p90": 11.2
+        },
+        {
+          "date": "2026-11-19",
+          "p10": 5.0,
+          "p50": 8.5,
+          "p90": 11.2
+        },
+        {
+          "date": "2026-11-20",
+          "p10": 5.0,
+          "p50": 8.5,
+          "p90": 11.2
+        },
+        {
+          "date": "2026-11-21",
+          "p10": 5.0,
+          "p50": 8.5,
+          "p90": 11.2
+        },
+        {
+          "date": "2026-11-22",
+          "p10": 5.0,
+          "p50": 8.5,
+          "p90": 11.2
+        }
+      ],
+      "method": "model",
+      "backtest": {
+        "mae_model": 2.556,
+        "mae_naive": 2.618,
+        "coverage_80": 0.812
+      }
+    },
+    "general_cargo": {
+      "p10": 16.0,
+      "p50": 25.4,
+      "p90": 33.2,
+      "daily": [
+        {
+          "date": "2026-11-16",
+          "p10": 0.6,
+          "p50": 3.6,
+          "p90": 6.7
+        },
+        {
+          "date": "2026-11-17",
+          "p10": 0.6,
+          "p50": 3.6,
+          "p90": 6.7
+        },
+        {
+          "date": "2026-11-18",
+          "p10": 0.6,
+          "p50": 3.6,
+          "p90": 6.7
+        },
+        {
+          "date": "2026-11-19",
+          "p10": 0.6,
+          "p50": 3.6,
+          "p90": 6.7
+        },
+        {
+          "date": "2026-11-20",
+          "p10": 0.6,
+          "p50": 3.6,
+          "p90": 6.7
+        },
+        {
+          "date": "2026-11-21",
+          "p10": 0.6,
+          "p50": 3.6,
+          "p90": 6.7
+        },
+        {
+          "date": "2026-11-22",
+          "p10": 0.6,
+          "p50": 3.6,
+          "p90": 6.7
+        }
+      ],
+      "method": "model",
+      "backtest": {
+        "mae_model": 1.889,
+        "mae_naive": 1.972,
+        "coverage_80": 0.806
+      }
+    },
+    "roro": {
+      "p10": 4.6,
+      "p50": 8.8,
+      "p90": 12.2,
+      "daily": [
+        {
+          "date": "2026-11-16",
+          "p10": 0.0,
+          "p50": 1.3,
+          "p90": 2.0
+        },
+        {
+          "date": "2026-11-17",
+          "p10": 0.0,
+          "p50": 1.3,
+          "p90": 2.0
+        },
+        {
+          "date": "2026-11-18",
+          "p10": 0.0,
+          "p50": 1.3,
+          "p90": 2.0
+        },
+        {
+          "date": "2026-11-19",
+          "p10": 0.0,
+          "p50": 1.3,
+          "p90": 2.0
+        },
+        {
+          "date": "2026-11-20",
+          "p10": 0.0,
+          "p50": 1.3,
+          "p90": 2.0
+        },
+        {
+          "date": "2026-11-21",
+          "p10": 0.0,
+          "p50": 1.3,
+          "p90": 2.0
+        },
+        {
+          "date": "2026-11-22",
+          "p10": 0.0,
+          "p50": 1.3,
+          "p90": 2.0
+        }
+      ],
+      "method": "model",
+      "backtest": {
+        "mae_model": 0.954,
+        "mae_naive": 0.997,
+        "coverage_80": 0.804
+      }
+    },
+    "tanker": {
+      "p10": 47.3,
+      "p50": 58.3,
+      "p90": 70.3,
+      "daily": [
+        {
+          "date": "2026-11-16",
+          "p10": 4.6,
+          "p50": 8.3,
+          "p90": 12.5
+        },
+        {
+          "date": "2026-11-17",
+          "p10": 4.6,
+          "p50": 8.3,
+          "p90": 12.5
+        },
+        {
+          "date": "2026-11-18",
+          "p10": 4.6,
+          "p50": 8.3,
+          "p90": 12.5
+        },
+        {
+          "date": "2026-11-19",
+          "p10": 4.6,
+          "p50": 8.3,
+          "p90": 12.5
+        },
+        {
+          "date": "2026-11-20",
+          "p10": 4.6,
+          "p50": 8.3,
+          "p90": 12.5
+        },
+        {
+          "date": "2026-11-21",
+          "p10": 4.6,
+          "p50": 8.3,
+          "p90": 12.5
+        },
+        {
+          "date": "2026-11-22",
+          "p10": 4.6,
+          "p50": 8.3,
+          "p90": 12.5
+        }
+      ],
+      "method": "model",
+      "backtest": {
+        "mae_model": 2.934,
+        "mae_naive": 2.987,
+        "coverage_80": 0.78
+      }
+    }
   },
-  {
-   "date": "2026-11-18",
-   "p10": 24.7,
-   "p50": 30.1,
-   "p90": 35.6
+  "method": "naive_baseline",
+  "backtest": {
+    "mae_model": 5.219,
+    "mae_naive": 5.082,
+    "naive_kind": "naive_ma7",
+    "mae_naive_ma7": 5.082,
+    "mae_naive_last": 6.414,
+    "coverage_80": 0.799,
+    "coverage_80_model": 0.788,
+    "coverage_80_naive": 0.799,
+    "window": {
+      "start": "2026-05-11",
+      "end": "2026-11-08",
+      "issue_dates": 182,
+      "forecast_points": 1274,
+      "horizons": "1-7 days"
+    },
+    "model_beats_naive": false,
+    "verdict": "Model does NOT beat the naive baseline (naive ma7) in the backtest (MAE 5.22 vs 5.08); the naive baseline is shown instead.",
+    "model_spec": "naive_ma7 (fallback); model was ewma_hl28"
   },
-  {
-   "date": "2026-11-19",
-   "p10": 24.1,
-   "p50": 30.1,
-   "p90": 36.2
+  "method_note": "Forecast = the last 7-day average, repeated for 7 days: our weighted model did not beat this naive baseline in a time-ordered test (2026-05-11 to 2026-11-08), so we show the baseline. Range = 10th-90th percentile of its own errors over the past 8 weeks.",
+  "baseline": {
+    "mean_per_day": 74.6,
+    "period": "2023-01-01 to 2023-10-31",
+    "label": "Jan-Oct 2023 average (before the Red Sea crisis)"
   },
-  {
-   "date": "2026-11-20",
-   "p10": 23.5,
-   "p50": 30.1,
-   "p90": 36.8
-  },
-  {
-   "date": "2026-11-21",
-   "p10": 22.9,
-   "p50": 30.1,
-   "p90": 37.4
-  },
-  {
-   "date": "2026-11-22",
-   "p10": 22.3,
-   "p50": 30.1,
-   "p90": 38
-  }
- ],
- "weekly_total": {
-  "p10": 179,
-  "p50": 211,
-  "p90": 243
- },
- "by_type": {
-  "container": {
-   "p10": 13,
-   "p50": 16,
-   "p90": 19
-  },
-  "dry_bulk": {
-   "p10": 62,
-   "p50": 78,
-   "p90": 94
-  },
-  "general_cargo": {
-   "p10": 26,
-   "p50": 33,
-   "p90": 40
-  },
-  "roro": {
-   "p10": 5,
-   "p50": 6,
-   "p90": 7
-  },
-  "tanker": {
-   "p10": 62,
-   "p50": 78,
-   "p90": 94
-  }
- },
- "backtest": {
-  "mae_model": 3.1,
-  "mae_naive": 3.6,
-  "coverage_80": 0.83,
-  "window": {
-   "start": "2026-05-01",
-   "end": "2026-11-08"
-  }
- },
- "method_note": "MOCK forecast for layout only. Real method note will come from the model (#3)."
+  "note": "Forecast dates start the day after the last settled PortWatch day. Not financial advice."
 }

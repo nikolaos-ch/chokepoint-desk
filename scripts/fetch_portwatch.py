@@ -9,6 +9,7 @@ Writes, per the shared data contract (ticket #1):
   data/transits/hormuz.json
   data/transits/bab_el_mandeb.json
   data/raw/portwatch_chokepoints.csv   (raw copy of every source field)
+  data/raw/portwatch_meta.json         (real fetch time of that raw copy)
 
 Usage:
   python scripts/fetch_portwatch.py            # fetch live, rewrite everything
@@ -33,6 +34,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 TRANSITS_DIR = ROOT / "data" / "transits"
 RAW_CSV = ROOT / "data" / "raw" / "portwatch_chokepoints.csv"
+# Sidecar holding the real fetch time of RAW_CSV (file mtime is reset by git checkout).
+RAW_META = ROOT / "data" / "raw" / "portwatch_meta.json"
 
 QUERY_URL = (
     "https://services9.arcgis.com/weJ1QsnbMYJlCHdG/arcgis/rest/services/"
@@ -111,6 +114,20 @@ def write_raw_csv(rows: list[dict]) -> None:
     tmp.replace(RAW_CSV)
 
 
+def write_raw_meta(fetched_at: str, row_count: int) -> None:
+    write_json(RAW_META, {"fetched_at": fetched_at, "rows": row_count, "source": SOURCE_LABEL})
+
+
+def read_raw_fetched_at() -> str:
+    """Original UTC fetch time of the raw CSV; never guessed from file times."""
+    try:
+        meta = json.loads(RAW_META.read_text(encoding="utf-8"))
+        return str(meta["fetched_at"])
+    except (OSError, ValueError, KeyError) as err:
+        raise RuntimeError(f"Cannot read the original fetch time from {RAW_META} ({err}); "
+                           "refusing to date offline data") from err
+
+
 def read_raw_csv() -> list[dict]:
     if not RAW_CSV.exists():
         raise RuntimeError(f"No raw copy at {RAW_CSV}; run once without --offline")
@@ -124,7 +141,7 @@ def _int(value) -> int:
     return int(value) if value not in (None, "") else 0
 
 
-def build_strait(slug: str, rows: list[dict], fetched_at: str) -> dict:
+def build_strait(slug: str, rows: list[dict], fetched_at: str, offline: bool) -> dict:
     cfg = STRAITS[slug]
     mine = [r for r in rows if r["portid"] == cfg["portid"]]
     if not mine:
@@ -170,6 +187,9 @@ def build_strait(slug: str, rows: list[dict], fetched_at: str) -> dict:
         "source": SOURCE_LABEL,
         "source_url": QUERY_URL.rsplit("/query", 1)[0],
         "fetched_at": fetched_at,
+        # True when rebuilt from data/raw because PortWatch was not queried;
+        # fetched_at is then the time the raw copy was originally fetched.
+        "offline": offline,
         "last_data_date": dates[-1],
         "first_data_date": dates[0],
         "missing_dates": missing,
@@ -191,7 +211,7 @@ def main() -> int:
 
     if args.offline:
         rows = read_raw_csv()
-        fetched_at = datetime.fromtimestamp(RAW_CSV.stat().st_mtime, timezone.utc)
+        fetched_iso = read_raw_fetched_at()
     else:
         rows = fetch_rows()
         if RAW_CSV.exists():
@@ -199,13 +219,13 @@ def main() -> int:
             if len(rows) < previous:
                 raise RuntimeError(f"PortWatch returned {len(rows)} rows, fewer than the {previous} "
                                    "already saved; refusing to shrink history")
-        fetched_at = datetime.now(timezone.utc)
-    fetched_iso = fetched_at.replace(microsecond=0).isoformat().replace("+00:00", "Z")
+        fetched_iso = datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
     # Build and validate everything before writing anything.
-    outputs = {slug: build_strait(slug, rows, fetched_iso) for slug in STRAITS}
+    outputs = {slug: build_strait(slug, rows, fetched_iso, args.offline) for slug in STRAITS}
     if not args.offline:
         write_raw_csv(rows)
+        write_raw_meta(fetched_iso, len(rows))
     for slug, obj in outputs.items():
         write_json(TRANSITS_DIR / f"{slug}.json", obj)
         print(f"{slug}: {len(obj['daily'])} days {obj['first_data_date']}..{obj['last_data_date']}, "
