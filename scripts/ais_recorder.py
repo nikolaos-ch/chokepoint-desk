@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """AIS recorder for Hormuz + Bab el-Mandeb on the aisstream.io websocket (ticket #6).
 
-    AISSTREAM_API_KEY=... python scripts/ais_recorder.py --hours 48
+    AISSTREAM_API_KEY=... python scripts/ais_recorder.py --full-days 2   # Phase 0
     python scripts/ais_recorder.py --replay tests/fixtures/ais_sample.jsonl   # offline
 
 * The key is read from the AISSTREAM_API_KEY env var only. It is never written
@@ -35,7 +35,9 @@ MESSAGE_TYPES = ["PositionReport", "StandardClassBPositionReport", "ExtendedClas
 FLUSH_SECONDS, FLUSH_ROWS = 2.0, 500
 STATS_SECONDS = 60
 STABLE_SECONDS = 60          # a connection this old resets the backoff
-SILENCE_TIMEOUT = 120        # no message for this long -> reconnect
+SILENCE_TIMEOUT = 600        # no message for this long -> reconnect (pings catch dead sockets sooner)
+TICK_SECONDS = 5             # wake-up interval for heartbeat / deadline checks
+ACCEPT_SECONDS = 10          # an open connection counts as uptime after this long
 
 log = logging.getLogger("ais")
 
@@ -69,6 +71,12 @@ def setup_logging(secret: str | None) -> None:
 def backoff_delay(attempt: int, base: float = 1.0, cap: float = 60.0, rng=random.random) -> float:
     """Exponential backoff with full jitter: uniform(0.5, 1.0) * min(cap, base * 2**attempt)."""
     return min(cap, base * (2 ** attempt)) * (0.5 + 0.5 * rng())
+
+
+def seconds_until_full_days(now: dt.datetime, n: int, margin_s: int = 600) -> float:
+    """Seconds from `now` until n complete UTC days have been recorded (plus a margin)."""
+    first_midnight = dt.datetime.combine(now.date() + dt.timedelta(days=1), dt.time(), tzinfo=dt.timezone.utc)
+    return (first_midnight + dt.timedelta(days=n) - now).total_seconds() + margin_s
 
 
 def subscription(key: str) -> str:
@@ -111,9 +119,9 @@ class Recorder:
             self.con.execute("UPDATE sessions SET last_seen_at=? WHERE id=?", (now_iso(), self.session_id))
             self.con.commit()
 
-    def open_session(self) -> None:
+    def open_session(self, started_at: str | None = None) -> None:
         t = now_iso()
-        cur = self.con.execute("INSERT INTO sessions (started_at, last_seen_at) VALUES (?, ?)", (t, t))
+        cur = self.con.execute("INSERT INTO sessions (started_at, last_seen_at) VALUES (?, ?)", (started_at or t, t))
         self.con.commit()
         self.session_id = cur.lastrowid
 
@@ -133,25 +141,36 @@ async def run_live(rec: Recorder, key: str, deadline: float | None, stop: asynci
             async with websockets.connect(WS_URL, open_timeout=20, ping_interval=30, ping_timeout=30,
                                           max_size=2 ** 22) as ws:
                 await ws.send(subscription(key))   # must be sent within 3 s of connecting
-                rec.open_session()
+                connected_at, connected_iso = time.monotonic(), now_iso()
                 log.info("connected; subscribed to %s", ", ".join(L.BOXES))
-                last_flush = time.monotonic()
+                last_flush = last_msg = time.monotonic()
                 while not stop.is_set() and (deadline is None or time.monotonic() < deadline):
+                    tick = TICK_SECONDS if deadline is None else max(0.1, min(TICK_SECONDS, deadline - time.monotonic()))
+                    raw = None
                     try:
-                        raw = await asyncio.wait_for(ws.recv(), timeout=SILENCE_TIMEOUT)
+                        raw = await asyncio.wait_for(ws.recv(), timeout=tick)
                     except asyncio.TimeoutError:
+                        pass
+                    t = time.monotonic()
+                    # Uptime: a connection counts once it has stayed open ACCEPT_SECONDS (a
+                    # rejected key is closed at once) or delivered a message. Silent but open
+                    # time DOES count: zero messages over a full day is a real 0% result.
+                    if rec.session_id is None and (raw is not None or t - connected_at >= ACCEPT_SECONDS):
+                        rec.open_session(connected_iso)
+                    if raw is not None:
+                        if isinstance(raw, (bytes, bytearray)):
+                            raw = raw.decode("utf-8", "replace")
+                        if raw.startswith('{"error"'):
+                            # aisstream reports a bad key / bad subscription this way
+                            log.error("server error: %s", json.loads(raw).get("error", "unknown"))
+                            break
+                        rec.handle(raw)
+                        last_msg = t
+                    elif t - last_msg >= SILENCE_TIMEOUT:
                         log.warning("no message for %ss, reconnecting", SILENCE_TIMEOUT)
                         break
-                    if isinstance(raw, (bytes, bytearray)):
-                        raw = raw.decode("utf-8", "replace")
-                    if raw.startswith('{"error"'):
-                        # aisstream reports a bad key / bad subscription this way
-                        log.error("server error: %s", json.loads(raw).get("error", "unknown"))
-                        break
-                    rec.handle(raw)
-                    t = time.monotonic()
                     if t - last_flush >= FLUSH_SECONDS:
-                        rec.flush()
+                        rec.flush()                 # also advances the session heartbeat
                         last_flush = t
                     if t - last_stats >= STATS_SECONDS:
                         log.info("stats %s", json.dumps(rec.stats))
@@ -160,13 +179,17 @@ async def run_live(rec: Recorder, key: str, deadline: float | None, stop: asynci
             raise
         except Exception as e:  # network errors, handshake failures, server closes
             rec.stats["errors"] += 1
-            log.warning("connection error: %s", type(e).__name__)
+            rcvd = getattr(e, "rcvd", None)
+            why = f" (server: {rcvd.code} {rcvd.reason})" if rcvd is not None and rcvd.reason else ""
+            log.warning("connection error: %s%s", type(e).__name__, why)
         finally:
             rec.close_session()
         if stop.is_set() or (deadline is not None and time.monotonic() >= deadline):
             break
         attempt = 0 if time.monotonic() - started >= STABLE_SECONDS else attempt + 1
         delay = backoff_delay(attempt)
+        if deadline is not None:
+            delay = max(0.0, min(delay, deadline - time.monotonic()))
         log.info("reconnecting in %.1fs (attempt %d)", delay, attempt)
         try:
             await asyncio.wait_for(stop.wait(), timeout=delay)
@@ -186,6 +209,8 @@ def replay(rec: Recorder, path: Path) -> None:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="Record aisstream.io AIS for Hormuz + Bab el-Mandeb.")
     ap.add_argument("--hours", type=float, default=None, help="stop after this many hours (default: run forever)")
+    ap.add_argument("--full-days", type=int, default=None,
+                    help="stop once this many complete UTC days are recorded (Phase 0: 2)")
     ap.add_argument("--db", type=Path, default=L.DB_PATH)
     ap.add_argument("--replay", type=Path, help="replay a JSONL fixture instead of connecting")
     args = ap.parse_args(argv)
@@ -204,6 +229,10 @@ def main(argv=None) -> int:
 
     stop = asyncio.Event()
     deadline = time.monotonic() + args.hours * 3600 if args.hours else None
+    if args.full_days:
+        secs = seconds_until_full_days(dt.datetime.now(dt.timezone.utc), args.full_days)
+        deadline = time.monotonic() + secs
+        log.info("will stop in %.1f h, after %d full UTC day(s)", secs / 3600, args.full_days)
 
     async def _main():
         loop = asyncio.get_running_loop()

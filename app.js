@@ -84,7 +84,9 @@
   var cache = {};
   function getJSON(path) {
     if (!cache[path]) {
-      cache[path] = fetch(path, { cache: 'no-cache' }).then(function (r) {
+      var pre = window.__desk && window.__desk.req && window.__desk.req[path];
+      if (pre) delete window.__desk.req[path]; // a Response body can be read once
+      cache[path] = (pre || fetch(path, { cache: 'no-cache' })).then(function (r) {
         if (!r.ok) throw new Error(r.status + ' for ' + path);
         return r.json();
       }).then(function (j) { return { ok: true, data: j }; }, function (e) { return { ok: false, error: e, path: path }; });
@@ -363,15 +365,16 @@
         (rg ? '<span class="regime regime--' + esc(F.regime) + '"><svg viewBox="0 0 16 16" aria-hidden="true">' + rg.icon + '</svg>Regime: ' + rg.label + '</span>'
             : '<span class="regime">Regime: ' + esc(F.regime || 'unknown') + '</span>') +
         (reasons ? '<ul class="regime-reasons" aria-label="Why">' + reasons + '</ul>' : '') +
-      '</div><p class="stamp">Forecast issued ' + esc(stamp(F.issued_at)) + '</p></div>' +
+      '</div><p class="stamp">Forecast issued ' + esc(stamp(F.issued_at)) + '<br>' + methodLine(F) + '</p></div>' +
       '<div class="legend"><span class="legend__item"><i class="swatch swatch--line" style="background:var(--actual)"></i>Measured daily count</span>' +
         '<span class="legend__item"><i class="swatch swatch--band"></i>Likely range (80%)</span>' +
         '<span class="legend__item"><i class="swatch swatch--line" style="background:var(--s1)"></i>Central estimate</span></div>' +
-      '<div class="chart" id="f-chart" tabindex="0"></div>' +
+      '<div class="chart" id="f-chart" tabindex="0" role="group" aria-label="Forecast chart: measured counts, then the next 7 days" aria-describedby="f-hint"></div>' +
+      '<p class="chart-hint" id="f-hint">Hover or tap the chart to read a day. With a keyboard, focus the chart and use the left and right arrow keys.</p>' +
       '<div class="f-grid">' +
         '<div class="f-card"><p class="tile__label">Total transits, ' + esc(first ? day(first.date) : '') + ' – ' + esc(lastD ? day(lastD.date) : '') + '</p>' +
           '<p class="range">' + num(wt.p50) + ' <small>likely ' + num(wt.p10) + '–' + num(wt.p90) + '</small></p>' +
-          byTypeTable(F.by_type) + '</div>' +
+          byTypeTable(F.by_type, F.by_type_note) + '</div>' +
         '<div class="f-card">' + backtestHtml(bt, F) + '</div>' +
       '</div>' +
       (F.method_note ? '<p class="method"><strong>Method.</strong> ' + prettyDates(F.method_note) + '</p>' : '');
@@ -379,14 +382,23 @@
     drawForecastChart($('#f-chart'), daily, T);
   }
 
-  function byTypeTable(bt) {
+  function methodLine(F) {
+    var used = (F.backtest && F.backtest.method_used) || F.method;
+    var kind = F.backtest && NAIVE[F.backtest.naive_kind];
+    if (used === 'model') return 'Range from: <strong>the weighted model</strong>';
+    if (used === 'naive_baseline') return 'Range from: <strong>a simple guess</strong>' + (kind ? ' (' + esc(kind) + ')' : '');
+    return '';
+  }
+
+  function byTypeTable(bt, note) {
     if (!bt) return '';
     var rows = TYPES.filter(function (t) { return bt[t.key]; }).map(function (t) {
       var v = bt[t.key];
       return '<tr><th scope="row" style="font-weight:500"><i class="swatch" style="display:inline-block;margin-right:6px;background:' + t.color + '"></i>' + t.label + '</th><td>' + num(v.p50) + '</td><td>' + num(v.p10) + '–' + num(v.p90) + '</td></tr>';
     }).join('');
     if (!rows) return '';
-    return '<div class="table-scroll" style="margin-top:10px;max-height:none"><table><caption class="sr-only">Forecast 7-day totals by ship type</caption><thead><tr><th scope="col">Ship type</th><th scope="col">Central</th><th scope="col">Likely range</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+    return '<div class="table-scroll" style="margin-top:10px;max-height:none"><table><caption class="sr-only">Forecast 7-day totals by ship type</caption><thead><tr><th scope="col">Ship type</th><th scope="col">Central</th><th scope="col">Likely range</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+      '<p class="fine-print">Each ship type is forecast on its own, so the type figures do not add up exactly to the total, and their ranges do not add up to the total range.</p>';
   }
 
   function windowText(w) {
@@ -396,23 +408,42 @@
     return 'the test period';
   }
 
-  var NAIVE = { naive_ma7: 'Last 7-day average, held flat', naive_last: 'Last day, held flat' };
+  var NAIVE = { naive_ma7: 'last 7-day average, held flat', naive_last: 'last day, held flat' };
+  /* D6: the verdict is computed by the backend only (#3). The page maps its code to words
+     and never applies a rule of its own. */
+  var OUTCOME = {
+    model_clearly_better: 'Model clearly better',
+    no_meaningful_difference: 'No meaningful difference',
+    naive_better: 'Simple guess did better',
+    naive_clearly_better: 'Simple guess did better'
+  };
   function backtestHtml(bt, F) {
     if (!bt || bt.mae_model == null || bt.mae_naive == null) return '<p class="tile__label">How good is it?</p><p class="muted">No backtest published yet.</p>';
-    var m = +bt.mae_model, nv = +bt.mae_naive;
-    var better = bt.model_beats_naive != null ? !!bt.model_beats_naive : m < nv;
-    var pct = Math.abs(1 - m / nv) * 100, max = Math.max(m, nv);
-    var naiveLabel = bt.naive_label || NAIVE[bt.naive_kind] || 'Simple guess (nothing changes)';
+    var m = +bt.mae_model, nv = +bt.mae_naive, max = Math.max(m, nv);
+    var naiveLabel = (bt.naive_label || NAIVE[bt.naive_kind] || 'nothing changes').toLowerCase();
     var cov = bt.coverage_80 != null ? +bt.coverage_80 * (bt.coverage_80 <= 1 ? 100 : 1) : null;
-    var text = better
-      ? 'On past days the forecast missed the real count by ' + num(m, 1) + ' ships a day on average. A simple guess that assumes nothing changes (' + esc(naiveLabel.toLowerCase()) + ') missed by ' + num(nv, 1) + '. The model’s typical miss was ' + num(pct) + '% smaller, so the model is what you see above.'
-      : 'On past days our weighted model missed the real count by ' + num(m, 1) + ' ships a day on average. A simple guess (' + esc(naiveLabel.toLowerCase()) + ') missed by ' + num(nv, 1) + '. The model did not beat it, so the range shown above is the simple guess, not the model.';
+    var used = bt.method_used || (F && F.method) || null;
+    var shownIsModel = used === 'model';
+    var code = String(bt.outcome || '');
+    var head = OUTCOME[code] || (code ? code.replace(/_/g, ' ') : null);
+    var test = 'Over this period the weighted model missed the real count by ' + num(m, 1) + ' ships a day on average; a simple guess (' + esc(naiveLabel) + ') missed by ' + num(nv, 1) + '.';
+    var why = used == null ? ''
+      : shownIsModel
+        ? (code === 'model_clearly_better' ? 'The model was clearly better, so the range above comes from the model.'
+                                           : 'The range above comes from the model.')
+        : (code === 'model_clearly_better' ? 'The range above is the simple guess.'
+                                           : code === 'naive_clearly_better' || code === 'naive_better'
+                                             ? 'The simple guess was clearly better, so the range above is the simple guess (' + esc(naiveLabel) + ').'
+                                             : 'The model was not clearly better, so the range above is the simple guess (' + esc(naiveLabel) + ').');
     return '<p class="tile__label">How good is it? Tested on ' + esc(windowText(bt.window)) + '</p>' +
+      (head ? '<p class="verdict">' + esc(head) + '</p>' : '') +
       '<div class="kpi-compare" role="img" aria-label="Average daily miss: weighted model ' + num(m, 1) + ', simple guess ' + num(nv, 1) + ' ships per day">' +
         '<span>Weighted model</span><span class="kpi-bar"><span style="width:' + (m / max * 100) + '%;background:var(--s1)"></span></span><strong>' + num(m, 1) + '</strong>' +
         '<span>Simple guess</span><span class="kpi-bar"><span style="width:' + (nv / max * 100) + '%;background:var(--text-3)"></span></span><strong>' + num(nv, 1) + '</strong>' +
       '</div><p class="muted" style="font-size:12px;margin-top:-4px">Average daily miss, ships per day. Shorter is better.</p>' +
-      '<p class="muted">' + text + '</p>' +
+      '<p class="muted">' + test + '</p>' +
+      (why ? '<p class="muted">' + why + '</p>' : '') +
+      (bt.verdict ? '<p class="fine-print"><strong>Detail.</strong> ' + prettyDates(bt.verdict) + '</p>' : '') +
       (cov != null ? '<p class="muted">The real count fell inside the shaded band on ' + num(cov) + '% of test days. A well-sized band would hold about 80%.</p>' : '');
   }
 
@@ -580,30 +611,35 @@
     $('#strait-title').textContent = cfg.title;
     document.title = 'Chokepoint Desk · ' + cfg.title;
     renderLegendA();
-    Promise.all([
-      getJSON('data/transits/' + strait + '.json'),
-      getJSON('data/forecast/' + strait + '.json'),
-      getJSON('data/rules.json'),
-      getJSON('data/ledger.json')
-    ]).then(function (res) {
+    var pTr = getJSON('data/transits/' + strait + '.json');
+    var pFc = getJSON('data/forecast/' + strait + '.json');
+    // Each panel draws as soon as its own file is in; the small files never wait for the big one.
+    getJSON('data/rules.json').then(function (r) { if (my === token) renderRules(r); });
+    getJSON('data/ledger.json').then(function (r) { if (my === token) renderLedger(r); });
+    pFc.then(function (fc) {
+      if (my !== token) return;
+      state.forecast = fc;
+      state.refs = refsFor(strait, fc);
+      renderForecast(fc, state.transits && state.transits.strait === strait ? state.transits : null);
+    });
+    Promise.all([pTr, pFc]).then(function (res) {
       if (my !== token) return;
       var tr = res[0], fc = res[1];
-      state.refs = refsFor(strait, fc);
       renderLegendA();
       if (tr.ok) {
         var T = state.transits = normTransits(tr.data);
-        $('#data-stamp').innerHTML = 'Transit data through <strong>' + esc(day(T.last_data_date)) + '</strong> · fetched ' + esc(stamp(T.fetched_at)) + ' · source: ' + esc(T.source);
-        renderTiles(T); renderChartA(T); renderTableA(T);
+        T.strait = strait;
+        $('#data-stamp').innerHTML = 'Transit data through <strong>' + esc(day(T.last_data_date)) + '</strong> · fetched ' + esc(stamp(T.fetched_at)) + ' · source: ' + esc(T.source) +
+          staleNote(T.last_data_date) +
+          (tr.data.offline === true ? '<span class="offline-note" role="note">PortWatch was unavailable at the last refresh; showing data fetched on ' + esc(stamp(T.fetched_at)) + '. Counts run to ' + esc(day(T.last_data_date)) + '.</span>' : '');
+        renderTiles(T); renderChartA(T); syncTable();
+        if (fc.ok) { var fh = $('#f-chart'); if (fh) drawForecastChart(fh, sortedDaily(fc.data), T); }
       } else {
         state.transits = null;
         $('#data-stamp').textContent = 'Transit data not available yet.';
         $('#a-tiles').innerHTML = ''; $('#a-table').innerHTML = ''; $('#a-note').textContent = '';
         $('#a-chart').innerHTML = '<p class="empty">No transit file yet (<code>data/transits/' + esc(strait) + '.json</code>).</p>';
       }
-      state.forecast = fc;
-      renderForecast(fc, state.transits);
-      renderRules(res[2]);
-      renderLedger(res[3]);
       var mock = [];
       if (tr.ok && isMock(tr.data.source)) mock.push('transit counts');
       if (fc.ok && isMock(fc.data.method_note, fc.data.source)) mock.push('forecast');
@@ -612,11 +648,35 @@
     });
   }
 
+  function sortedDaily(F) { return (F.daily || []).slice().sort(function (a, b) { return a.date < b.date ? -1 : 1; }); }
+
+  // D7: say so plainly when the newest count is more than a week old.
+  var STALE_DAYS = 7;
+  function staleNote(lastDate) {
+    var d = parseDate(lastDate);
+    if (!d) return '';
+    var age = Math.floor((Date.now() - d.getTime()) / 864e5);
+    if (age <= STALE_DAYS) return '';
+    return '<span class="stale-note" role="note"><strong>Stale data.</strong> The newest count is from ' + esc(day(lastDate)) + ', ' + age + ' days ago. The daily refresh may have failed; treat every number below as out of date.</span>';
+  }
+
+  // The full daily table (thousands of rows) is only built when someone opens it.
+  var tableFor = null;
+  function syncTable() {
+    var det = $('#a-table').closest('details');
+    if (det && det.open && state.transits && tableFor !== state.transits) {
+      renderTableA(state.transits);
+      tableFor = state.transits;
+    } else if (tableFor !== state.transits) {
+      $('#a-table').innerHTML = '';
+    }
+  }
+
   function redrawCharts() {
     if (state.transits) renderChartA(state.transits);
     if (state.forecast && state.forecast.ok) {
       var host = $('#f-chart');
-      if (host) drawForecastChart(host, (state.forecast.data.daily || []).slice().sort(function (a, b) { return a.date < b.date ? -1 : 1; }), state.transits);
+      if (host) drawForecastChart(host, sortedDaily(state.forecast.data), state.transits);
     }
   }
 
@@ -639,6 +699,7 @@
         if (state.transits) renderChartA(state.transits);
       });
     });
+    $('#a-table').closest('details').addEventListener('toggle', syncTable);
     document.querySelectorAll('[data-scale]').forEach(function (b) {
       b.addEventListener('click', function () {
         state.scale = b.getAttribute('data-scale');

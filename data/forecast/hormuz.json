@@ -1,6 +1,6 @@
 {
   "strait": "hormuz",
-  "issued_at": "2026-11-17T20:40:31Z",
+  "issued_at": "2026-11-17T23:01:23Z",
   "last_data_date": "2026-11-15",
   "source": "IMF PortWatch, Daily Chokepoints Data (portwatch.imf.org)",
   "regime": "closed",
@@ -137,105 +137,144 @@
     {
       "date": "2026-11-16",
       "p10": 0.0,
-      "p50": 1.9,
+      "p50": 2.3,
       "p90": 5.0
     },
     {
       "date": "2026-11-17",
       "p10": 0.0,
-      "p50": 1.9,
+      "p50": 2.3,
       "p90": 5.0
     },
     {
       "date": "2026-11-18",
       "p10": 0.0,
-      "p50": 1.9,
+      "p50": 2.3,
       "p90": 5.0
     },
     {
       "date": "2026-11-19",
       "p10": 0.0,
-      "p50": 1.9,
+      "p50": 2.3,
       "p90": 5.0
     },
     {
       "date": "2026-11-20",
       "p10": 0.0,
-      "p50": 1.9,
+      "p50": 2.3,
       "p90": 5.0
     },
     {
       "date": "2026-11-21",
       "p10": 0.0,
-      "p50": 1.9,
+      "p50": 2.3,
       "p90": 5.0
     },
     {
       "date": "2026-11-22",
       "p10": 0.0,
-      "p50": 1.9,
+      "p50": 2.3,
       "p90": 5.0
     }
   ],
   "weekly_total": {
-    "p10": 3.6,
-    "p50": 13.5,
-    "p90": 21.4
+    "p10": 8.0,
+    "p50": 16.0,
+    "p90": 23.5
   },
   "by_type": {
     "container": {
-      "p10": 0.1,
-      "p50": 2.7,
-      "p90": 4.7,
+      "p10": 0.5,
+      "p50": 2.0,
+      "p90": 4.0,
       "daily": [
         {
           "date": "2026-11-16",
           "p10": 0.0,
-          "p50": 0.4,
-          "p90": 1.2
+          "p50": 0.3,
+          "p90": 1.0
         },
         {
           "date": "2026-11-17",
           "p10": 0.0,
-          "p50": 0.4,
-          "p90": 1.2
+          "p50": 0.3,
+          "p90": 1.0
         },
         {
           "date": "2026-11-18",
           "p10": 0.0,
-          "p50": 0.4,
-          "p90": 1.2
+          "p50": 0.3,
+          "p90": 1.0
         },
         {
           "date": "2026-11-19",
           "p10": 0.0,
-          "p50": 0.4,
-          "p90": 1.2
+          "p50": 0.3,
+          "p90": 1.0
         },
         {
           "date": "2026-11-20",
           "p10": 0.0,
-          "p50": 0.4,
-          "p90": 1.2
+          "p50": 0.3,
+          "p90": 1.0
         },
         {
           "date": "2026-11-21",
           "p10": 0.0,
-          "p50": 0.4,
-          "p90": 1.2
+          "p50": 0.3,
+          "p90": 1.0
         },
         {
           "date": "2026-11-22",
           "p10": 0.0,
-          "p50": 0.4,
-          "p90": 1.2
+          "p50": 0.3,
+          "p90": 1.0
         }
       ],
-      "method": "model",
+      "method": "naive_baseline",
       "backtest": {
-        "mae_model": 0.666,
-        "mae_naive": 0.668,
-        "coverage_80": 0.823
+        "mae_model": 0.444,
+        "mae_naive": 0.445,
+        "coverage_80": 0.904,
+        "window": {
+          "start": "2026-08-10",
+          "end": "2026-11-08"
+        },
+        "method_used": "naive_baseline",
+        "naive_kind": "naive_ma7",
+        "outcome": "no_meaningful_difference",
+        "gain": 0.001,
+        "gain_ci95": [
+          -0.022,
+          0.015
+        ],
+        "rule": "model shown only if the whole 95% CI of (naive MAE - model MAE) is above 0",
+        "half_life_days": 2,
+        "forecast_points": 637,
+        "out_of_sample_check": {
+          "tuned_on": {
+            "start": "2026-01-28",
+            "end": "2026-04-28"
+          },
+          "chosen_on": {
+            "start": "2026-05-05",
+            "end": "2026-08-03"
+          },
+          "scored_on": {
+            "start": "2026-08-10",
+            "end": "2026-11-08"
+          },
+          "chose": "naive_baseline",
+          "outcome_then": "no_meaningful_difference",
+          "gain_then": 0.01,
+          "gain_ci95_then": [
+            -0.026,
+            0.042
+          ],
+          "mae_of_choice": 0.445,
+          "mae_naive": 0.445,
+          "coverage_80_of_choice": 0.904
+        }
       }
     },
     "dry_bulk": {
@@ -288,9 +327,48 @@
       ],
       "method": "naive_baseline",
       "backtest": {
-        "mae_model": 1.503,
-        "mae_naive": 1.497,
-        "coverage_80": 0.799
+        "mae_model": 1.116,
+        "mae_naive": 1.067,
+        "coverage_80": 0.843,
+        "window": {
+          "start": "2026-08-10",
+          "end": "2026-11-08"
+        },
+        "method_used": "naive_baseline",
+        "naive_kind": "naive_ma7",
+        "outcome": "naive_clearly_better",
+        "gain": -0.049,
+        "gain_ci95": [
+          -0.072,
+          -0.021
+        ],
+        "rule": "model shown only if the whole 95% CI of (naive MAE - model MAE) is above 0",
+        "half_life_days": 2,
+        "forecast_points": 637,
+        "out_of_sample_check": {
+          "tuned_on": {
+            "start": "2026-01-28",
+            "end": "2026-04-28"
+          },
+          "chosen_on": {
+            "start": "2026-05-05",
+            "end": "2026-08-03"
+          },
+          "scored_on": {
+            "start": "2026-08-10",
+            "end": "2026-11-08"
+          },
+          "chose": "naive_baseline",
+          "outcome_then": "no_meaningful_difference",
+          "gain_then": 0.052,
+          "gain_ci95_then": [
+            -0.05,
+            0.16
+          ],
+          "mae_of_choice": 1.067,
+          "mae_naive": 1.067,
+          "coverage_80_of_choice": 0.843
+        }
       }
     },
     "general_cargo": {
@@ -343,9 +421,48 @@
       ],
       "method": "naive_baseline",
       "backtest": {
-        "mae_model": 1.106,
-        "mae_naive": 1.096,
-        "coverage_80": 0.82
+        "mae_model": 0.857,
+        "mae_naive": 0.868,
+        "coverage_80": 0.86,
+        "window": {
+          "start": "2026-08-10",
+          "end": "2026-11-08"
+        },
+        "method_used": "naive_baseline",
+        "naive_kind": "naive_ma7",
+        "outcome": "no_meaningful_difference",
+        "gain": 0.011,
+        "gain_ci95": [
+          -0.073,
+          0.11
+        ],
+        "rule": "model shown only if the whole 95% CI of (naive MAE - model MAE) is above 0",
+        "half_life_days": 28,
+        "forecast_points": 637,
+        "out_of_sample_check": {
+          "tuned_on": {
+            "start": "2026-01-28",
+            "end": "2026-04-28"
+          },
+          "chosen_on": {
+            "start": "2026-05-05",
+            "end": "2026-08-03"
+          },
+          "scored_on": {
+            "start": "2026-08-10",
+            "end": "2026-11-08"
+          },
+          "chose": "naive_baseline",
+          "outcome_then": "no_meaningful_difference",
+          "gain_then": 0.008,
+          "gain_ci95_then": [
+            -0.039,
+            0.058
+          ],
+          "mae_of_choice": 0.868,
+          "mae_naive": 0.868,
+          "coverage_80_of_choice": 0.86
+        }
       }
     },
     "roro": {
@@ -398,89 +515,193 @@
       ],
       "method": "naive_baseline",
       "backtest": {
-        "mae_model": 0.103,
-        "mae_naive": 0.1,
-        "coverage_80": 0.941
+        "mae_model": 0.007,
+        "mae_naive": 0.0,
+        "coverage_80": 1.0,
+        "window": {
+          "start": "2026-08-10",
+          "end": "2026-11-08"
+        },
+        "method_used": "naive_baseline",
+        "naive_kind": "naive_ma7",
+        "outcome": "naive_clearly_better",
+        "gain": -0.007,
+        "gain_ci95": [
+          -0.011,
+          -0.002
+        ],
+        "rule": "model shown only if the whole 95% CI of (naive MAE - model MAE) is above 0",
+        "half_life_days": 10,
+        "forecast_points": 637,
+        "out_of_sample_check": {
+          "tuned_on": {
+            "start": "2026-01-28",
+            "end": "2026-04-28"
+          },
+          "chosen_on": {
+            "start": "2026-05-05",
+            "end": "2026-08-03"
+          },
+          "scored_on": {
+            "start": "2026-08-10",
+            "end": "2026-11-08"
+          },
+          "chose": "naive_baseline",
+          "outcome_then": "no_meaningful_difference",
+          "gain_then": -0.004,
+          "gain_ci95_then": [
+            -0.067,
+            0.062
+          ],
+          "mae_of_choice": 0.0,
+          "mae_naive": 0.0,
+          "coverage_80_of_choice": 1.0
+        }
       }
     },
     "tanker": {
       "p10": 0.0,
-      "p50": 2.1,
-      "p90": 6.6,
+      "p50": 3.0,
+      "p90": 7.5,
       "daily": [
         {
           "date": "2026-11-16",
           "p10": 0.0,
-          "p50": 0.3,
-          "p90": 1.5
+          "p50": 0.4,
+          "p90": 1.6
         },
         {
           "date": "2026-11-17",
           "p10": 0.0,
-          "p50": 0.3,
-          "p90": 1.5
+          "p50": 0.4,
+          "p90": 1.6
         },
         {
           "date": "2026-11-18",
           "p10": 0.0,
-          "p50": 0.3,
-          "p90": 1.5
+          "p50": 0.4,
+          "p90": 1.6
         },
         {
           "date": "2026-11-19",
           "p10": 0.0,
-          "p50": 0.3,
-          "p90": 1.5
+          "p50": 0.4,
+          "p90": 1.6
         },
         {
           "date": "2026-11-20",
           "p10": 0.0,
-          "p50": 0.3,
-          "p90": 1.5
+          "p50": 0.4,
+          "p90": 1.6
         },
         {
           "date": "2026-11-21",
           "p10": 0.0,
-          "p50": 0.3,
-          "p90": 1.5
+          "p50": 0.4,
+          "p90": 1.6
         },
         {
           "date": "2026-11-22",
           "p10": 0.0,
-          "p50": 0.3,
-          "p90": 1.5
+          "p50": 0.4,
+          "p90": 1.6
         }
       ],
-      "method": "model",
+      "method": "naive_baseline",
       "backtest": {
-        "mae_model": 1.849,
-        "mae_naive": 1.885,
-        "coverage_80": 0.832
+        "mae_model": 0.838,
+        "mae_naive": 0.834,
+        "coverage_80": 0.926,
+        "window": {
+          "start": "2026-08-10",
+          "end": "2026-11-08"
+        },
+        "method_used": "naive_baseline",
+        "naive_kind": "naive_ma7",
+        "outcome": "no_meaningful_difference",
+        "gain": -0.004,
+        "gain_ci95": [
+          -0.034,
+          0.017
+        ],
+        "rule": "model shown only if the whole 95% CI of (naive MAE - model MAE) is above 0",
+        "half_life_days": 2,
+        "forecast_points": 637,
+        "out_of_sample_check": {
+          "tuned_on": {
+            "start": "2026-01-28",
+            "end": "2026-04-28"
+          },
+          "chosen_on": {
+            "start": "2026-05-05",
+            "end": "2026-08-03"
+          },
+          "scored_on": {
+            "start": "2026-08-10",
+            "end": "2026-11-08"
+          },
+          "chose": "naive_baseline",
+          "outcome_then": "no_meaningful_difference",
+          "gain_then": 0.008,
+          "gain_ci95_then": [
+            -0.474,
+            0.405
+          ],
+          "mae_of_choice": 0.992,
+          "mae_naive": 0.992,
+          "coverage_80_of_choice": 0.928
+        }
       }
     }
   },
-  "method": "model",
+  "by_type_note": "Each ship type is forecast separately, so the per-type p50s need not add up to the total p50, and p10/p90 never add up (ranges do not sum).",
+  "method": "naive_baseline",
   "backtest": {
-    "mae_model": 3.463,
-    "mae_naive": 3.566,
-    "naive_kind": "naive_ma7",
-    "mae_naive_ma7": 3.566,
-    "mae_naive_last": 3.911,
-    "coverage_80": 0.792,
-    "coverage_80_model": 0.792,
-    "coverage_80_naive": 0.797,
+    "mae_model": 1.793,
+    "mae_naive": 1.743,
+    "coverage_80": 0.846,
     "window": {
-      "start": "2026-05-11",
-      "end": "2026-11-08",
-      "issue_dates": 182,
-      "forecast_points": 1274,
-      "horizons": "1-7 days"
+      "start": "2026-08-10",
+      "end": "2026-11-08"
     },
-    "model_beats_naive": true,
-    "verdict": "Model beats the naive baseline (naive ma7) in the backtest (MAE 3.46 vs 3.57); the model forecast is shown.",
-    "model_spec": "ewma_hl2"
+    "method_used": "naive_baseline",
+    "naive_kind": "naive_ma7",
+    "outcome": "naive_clearly_better",
+    "gain": -0.05,
+    "gain_ci95": [
+      -0.077,
+      -0.028
+    ],
+    "rule": "model shown only if the whole 95% CI of (naive MAE - model MAE) is above 0",
+    "half_life_days": 2,
+    "forecast_points": 637,
+    "out_of_sample_check": {
+      "tuned_on": {
+        "start": "2026-01-28",
+        "end": "2026-04-28"
+      },
+      "chosen_on": {
+        "start": "2026-05-05",
+        "end": "2026-08-03"
+      },
+      "scored_on": {
+        "start": "2026-08-10",
+        "end": "2026-11-08"
+      },
+      "chose": "model",
+      "outcome_then": "model_clearly_better",
+      "gain_then": 0.323,
+      "gain_ci95_then": [
+        0.01,
+        0.641
+      ],
+      "mae_of_choice": 1.793,
+      "mae_naive": 1.743,
+      "coverage_80_of_choice": 0.834
+    },
+    "verdict": "The naive ma7 baseline is clearly better than the model over 2026-08-10 to 2026-11-08 (gain -0.05 transits/day, 95% CI -0.08 to -0.03); the baseline is shown. Out-of-sample check: the same rule applied one quarter earlier chose the model, which then had MAE 1.79 vs 1.74 for naive on the most recent window."
   },
-  "method_note": "Forecast = recent daily transits averaged with weights that halve every 2 days going back, so the most recent days count most. Range = 10th-90th percentile of this method's own errors over the past 8 weeks. Tested on 2026-05-11 to 2026-11-08, never using future data; it beat the naive baseline.",
+  "method_note": "Forecast = the last 7-day average, repeated for 7 days. A weighted-average model did worse than it from 2026-08-10 to 2026-11-08, so the simpler method is shown. Range = 10th-90th percentile of its past errors.",
   "baseline": {
     "mean_per_day": 85.5,
     "period": "2025-01-01 to 2025-12-31",

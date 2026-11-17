@@ -10,6 +10,19 @@
   <meta name="theme-color" content="#121211" media="(prefers-color-scheme: dark)">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0b0b'/%3E%3Cpath d='M6 22h4V12h-4zM12 22h4V8h-4zM18 22h4V15h-4zM24 22h2V18h-2z' fill='%23fcfcfb'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="styles.css">
+  <script>
+    // Start the data downloads before the page body and app.js are parsed.
+    (function () {
+      var s = location.hash.slice(1) === 'bab_el_mandeb' ? 'bab_el_mandeb' : 'hormuz';
+      var get = function (p) { return fetch(p, { cache: 'no-cache' }); };
+      window.__desk = { strait: s, req: {
+        ['data/transits/' + s + '.json']: get('data/transits/' + s + '.json'),
+        ['data/forecast/' + s + '.json']: get('data/forecast/' + s + '.json'),
+        'data/rules.json': get('data/rules.json'),
+        'data/ledger.json': get('data/ledger.json')
+      } };
+    })();
+  </script>
   <script src="app.js" defer></script>
 </head>
 <body>
@@ -62,7 +75,8 @@
         </div>
       </div>
       <div class="legend" id="a-legend"></div>
-      <div class="chart" id="a-chart" tabindex="0"></div>
+      <div class="chart" id="a-chart" tabindex="0" role="group" aria-label="Daily transits chart" aria-describedby="a-hint"></div>
+      <p class="chart-hint" id="a-hint">Hover or tap the chart to read a day. With a keyboard, focus the chart and use the left and right arrow keys.</p>
       <p class="chart-note" id="a-note"></p>
       <details class="table-toggle">
         <summary>Show the numbers</summary>

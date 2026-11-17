@@ -184,6 +184,12 @@ class TestRecorderSafety(unittest.TestCase):
             if old is not None:
                 os.environ["AISSTREAM_API_KEY"] = old
 
+    def test_full_days_deadline(self):
+        import datetime as dt
+        now = dt.datetime(2026, 11, 17, 21, 0, tzinfo=dt.timezone.utc)
+        # 3 h to midnight + 48 h + 10 min margin
+        self.assertEqual(R.seconds_until_full_days(now, 2), (3 + 48) * 3600 + 600)
+
     def test_gate_inside_box(self):
         for strait, ((a, b), (c, d)) in L.GATES.items():
             (la0, lo0), (la1, lo1) = L.BOXES[strait]

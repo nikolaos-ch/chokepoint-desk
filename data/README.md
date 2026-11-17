@@ -16,8 +16,24 @@ page shows a "mock data" banner. (Real pipeline files from #2 / #3 replaced the 
 
 Optional fields the page also uses when present: `forecast.baseline`
 (`{mean_per_day, label}`) becomes the reference line for straits without fixed lines
-(Bab el-Mandeb); `backtest.model_beats_naive` and `backtest.naive_kind`
-(`naive_ma7` | `naive_last`) drive the plain-words backtest text.
+(Bab el-Mandeb); `backtest.naive_kind` (`naive_ma7` | `naive_last`) names the simple guess
+in the backtest text.
+
+Backtest verdict (QA #10, D6). The verdict is computed by the backend (#3) only; the page
+applies no rule of its own. It reads:
+- `backtest.outcome`: headline. `model_clearly_better` = "Model clearly better",
+  `no_meaningful_difference` = "No meaningful difference", `naive_better` /
+  `naive_clearly_better` = "Simple guess did better". Any other code is shown as words.
+- `backtest.method_used` (else top-level `method`): `model` | `naive_baseline`, which says whose
+  range the chart shows.
+- `mae_model`, `mae_naive`, `coverage_80`, `window`: the test-window numbers on the card.
+- `backtest.verdict`: shown as is, as a small "Detail." line under the numbers.
+- `naive_kind`: names the simple guess in the "Range from:" line under the issue date.
+The backend must keep these three consistent (no "No meaningful difference" with
+`method_used: model`); the page shows them exactly as given.
+
+Stale data (D7): if `last_data_date` is more than 7 days before the viewer's clock, the page
+shows a red "Stale data" notice under the data stamp.
 
 ---
 
@@ -37,6 +53,9 @@ Optional fields the page also uses when present: `forecast.baseline`
 }
 ```
 
+- `offline` (bool, from #9): `true` when the file was rebuilt from data/raw without querying
+  PortWatch; `fetched_at` is then the original fetch time. The page shows a
+  "PortWatch was unavailable" notice with that date.
 - Daily array under `daily` (what #2 writes); `rows` or `data` are accepted too. Any order; the page sorts by date.
 - `ma7` = mean of `total` over the 7 days ending on `date`; `null` while fewer than 7 days exist.
   If `ma7` is missing the page computes it.
@@ -62,6 +81,31 @@ Optional fields the page also uses when present: `forecast.baseline`
 - `mae_*` are mean absolute daily errors, in transits/day. `coverage_80` is the share
   (0–1) of backtest days where the actual count fell inside p10–p90.
 - `backtest.window` may also be a plain string, e.g. `"2026-05-01 to 2026-11-08"`.
+- **Per-type figures do not add up to the total.** Each ship type is forecast on its
+  own (and may use a different method), so the `by_type` p50s need not sum to
+  `weekly_total.p50`, and p10/p90 never add up (ranges do not sum). The file repeats
+  this in `by_type_note`.
+
+**One verdict, one source.** `scripts/forecast.py` is the only place the model-vs-naive
+choice is made (rule: the model is shown only if the whole 95% CI of its MAE gain over
+naive is above 0; no extra minimum-gain threshold). The page applies no rule of its own:
+it renders `method`, `backtest.outcome` and `backtest.verdict`. `daily`, `weekly_total`
+and the ranges always come from the method named in `method`.
+
+Extra fields written by `scripts/forecast.py` (#3), all optional for the page:
+
+| Field | Meaning |
+|---|---|
+| `method` | `model` or `naive_baseline`: what the forecast numbers come from |
+| `backtest.outcome` | `model_clearly_better` \| `no_meaningful_difference` \| `naive_clearly_better` |
+| `backtest.verdict` | One plain-English sentence saying which method is shown and why |
+| `backtest.gain`, `gain_ci95` | Naive MAE minus model MAE (transits/day) and its 95% CI; the model is shown only if the whole CI is above 0 |
+| `backtest.naive_kind` | `naive_ma7` (last 7-day mean) or `naive_last` (yesterday) |
+| `backtest.out_of_sample_check` | The same choice rule run one quarter earlier and scored on `backtest.window`, which it never saw |
+| `by_type.<type>.method`, `.daily`, `.backtest` | Same as above, per ship type |
+| `regime_history` | `[{date, regime}]`, last 30 days, each computed from data up to that day |
+| `baseline` | `{mean_per_day, period, label}`: the pre-crisis reference the regime uses |
+| `last_data_date` | Last settled PortWatch day; forecast dates start the day after |
 
 ## rules.json  (hand-curated)
 

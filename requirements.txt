@@ -4,3 +4,6 @@
 # forecast (#3): scripts/forecast.py
 numpy>=1.26
 pandas>=2.1
+
+# AIS recorder (#6): scripts/ais_recorder.py (not used by the daily refresh)
+websockets>=12
