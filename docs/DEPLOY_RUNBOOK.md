@@ -8,3 +8,7 @@ Manual run: Actions > "Refresh data" > Run workflow (or `gh workflow run refresh
 
 Go-live needs (user): see check-in. Cost: GitHub Actions free for public repos (private: ~1-2 min/day of 2000 free min); Vercel Hobby free, non-commercial use only (flag if the Desk becomes paid).
 Rollback: Vercel dashboard > Deployments > Promote previous; or `git revert` the bad data commit.
+
+Live: https://chokepoint-desk.vercel.app (Vercel project chokepoint-desk, auto-deploys on push to main).
+Check compression: `curl -sI -H "Accept-Encoding: br" <url>/data/transits/hormuz.json | grep -i content-encoding`.
+Vercel CLI on this PC: use `npx.cmd vercel ...` (PowerShell blocks npx.ps1).
