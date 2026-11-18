@@ -123,13 +123,14 @@ are drawn with an EXAMPLE tag.
 | `field` | string | Exact field / column used |
 | `aggregation` | string | How daily values are combined (single day, weekly average, sum…) |
 | `comparison` | `">="` \| `">"` \| `"<="` \| `"<"` | Comparison as worded in the rule |
-| `threshold` | number | Ship count in the rule |
+| `threshold` | number \| null | Ship count in the rule |
+| `strikes` | number[] | Optional, for ladder markets: one question per number. Use with `threshold: null`; shown as e.g. "more than (>) each of 15, 20, 25" |
 | `window` | string | Counting window, in words |
 | `window_start`, `window_end` | date | Optional, for the current window |
 | `earliest_settlement` | date | Earliest date it can settle |
 | `url` | string | Link to the rule text |
 | `read_on` | date | **Required.** Day the rule text was read |
-| `notes` | string | Optional caveats |
+| `notes` | string | Optional caveats or verbatim rule text; over 240 characters it is folded behind "Show full text" |
 
 ## ledger.json  (hand-curated)
 

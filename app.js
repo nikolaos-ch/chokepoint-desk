@@ -537,6 +537,23 @@
     '>=': ['at least', '≥'], '>': ['more than', '>'], '<=': ['at most', '≤'], '<': ['fewer than', '<'],
     '≥': ['at least', '≥'], '≤': ['at most', '≤']
   };
+  // A rule row has one threshold, or (ladder markets) a list of strikes, one question each.
+  function conditionHtml(r, c) {
+    if (r.threshold != null) return '<span class="cmp">' + esc(c[0]) + ' ' + num(r.threshold) + ' <small>(' + esc(c[1]) + ' ' + num(r.threshold) + ')</small></span>';
+    var k = Array.isArray(r.strikes) ? r.strikes.filter(function (x) { return x != null && !isNaN(x); }) : [];
+    if (!k.length || !r.comparison) return '';
+    return '<span class="cmp">' + esc(c[0]) + ' <small>(' + esc(c[1]) + ')</small> each of ' + k.map(function (x) { return num(x, x % 1 ? 1 : 0); }).join(', ') + '</span>' +
+      '<br><small style="color:var(--text-2)">One question per number in the list.</small>';
+  }
+  // Notes may hold long verbatim rule quotes: fold anything past a short paragraph.
+  function notesHtml(n) {
+    if (!n) return '';
+    n = String(n);
+    if (n.length <= 240) return esc(n);
+    return '<details class="rule-notes"><summary><span class="rule-notes__preview">' + esc(n.slice(0, 140).replace(/\s+\S*$/, '')) + '… </span>' +
+      '<span class="rule-notes__more">Show full text</span><span class="rule-notes__less">Hide full text</span></summary><p>' + esc(n) + '</p></details>';
+  }
+
   function renderRules(res) {
     var host = $('#b-rules');
     if (!res.ok) { host.innerHTML = '<p class="empty">No rules file yet (<code>data/rules.json</code>).</p>'; return; }
@@ -546,18 +563,19 @@
       var c = CMP[r.comparison] || [r.comparison || '', r.comparison || ''];
       var url = safeUrl(r.url);
       var row = function (k, v) { return v ? '<dt>' + k + '</dt><dd>' + v + '</dd>' : ''; };
-      return '<article class="rule' + (r.example ? ' rule--example' : '') + '">' +
-        '<div class="rule__head"><h3>' + (r.example ? '<span class="tag-example">EXAMPLE</span>' : '') + esc(r.market_family || 'Rule') + '</h3>' +
-        '<span class="rule__venue">' + esc(r.venue || '') + '</span></div><dl>' +
+      // Collapsed to its title by default; the summary is the card header.
+      return '<details class="rule' + (r.example ? ' rule--example' : '') + '">' +
+        '<summary class="rule__head"><span class="rule__title"><h3>' + (r.example ? '<span class="tag-example">EXAMPLE</span>' : '') + esc(r.market_family || 'Rule') + '</h3>' +
+        '<span class="rule__venue">' + [esc(r.venue || ''), r.read_on ? 'read ' + esc(day(r.read_on)) : 'read date not recorded'].filter(Boolean).join(' · ') + '</span></span><span class="rule__chev" aria-hidden="true"></span></summary><dl>' +
         row('Settles on', esc(r.settlement_source)) +
         row('Field', esc(r.field)) +
         row('Counted as', esc(r.aggregation)) +
-        row('Condition', r.threshold != null ? '<span class="cmp">' + esc(c[0]) + ' ' + num(r.threshold) + ' <small>(' + esc(c[1]) + ' ' + num(r.threshold) + ')</small></span>' : '') +
+        row('Condition', conditionHtml(r, c)) +
         row('Window', esc(r.window) + (r.window_start && r.window_end ? ' <span style="color:var(--text-2)">(' + esc(day(r.window_start)) + ' – ' + esc(day(r.window_end)) + ')</span>' : '')) +
         row('Earliest settlement', r.earliest_settlement ? esc(day(r.earliest_settlement)) : '') +
-        row('Notes', esc(r.notes)) +
+        row('Notes', notesHtml(r.notes)) +
         '</dl><div class="rule__foot"><span>Rule text read on <strong>' + esc(day(r.read_on)) + '</strong></span>' +
-        (url ? '<a href="' + esc(url) + '" target="_blank" rel="noopener">Source rule text ↗</a>' : '<span>No link recorded</span>') + '</div></article>';
+        (url ? '<a href="' + esc(url) + '" target="_blank" rel="noopener">Source rule text ↗</a>' : '<span>No link recorded</span>') + '</div></details>';
     }).join('');
   }
 
@@ -579,9 +597,9 @@
       ? (real.length
           ? '<strong>' + real.length + '</strong> incident' + (real.length > 1 ? 's' : '') + ' recorded, ' + esc(day(start)) + ' – ' + esc(day(end)) + ': ' +
             counts.claimed_only + ' claimed only, ' + counts.third_party_report + ' third-party report' + (counts.third_party_report === 1 ? '' : 's') + ', ' + counts.confirmed + ' confirmed.'
-          : 'No incidents recorded for ' + esc(day(start)) + ' – ' + esc(day(end)) + '.') + ' Ledger last updated ' + esc(day(end)) + '.'
+          : 'No incidents reported in the last ' + wd + ' days (' + esc(day(start)) + ' – ' + esc(day(end)) + ').') + ' Ledger last updated ' + esc(day(end)) + '.'
       : '';
-    if (!rows.length) { host.innerHTML = '<p class="empty">No rows for this strait yet.</p>'; return; }
+    if (!rows.length) { host.innerHTML = start ? '' : '<p class="empty">No incidents reported for this strait.</p>'; return; }
     host.innerHTML = '<div class="ledger">' + rows.map(function (r) {
       var links = (r.links || []).map(function (l) {
         var u = safeUrl(l.url);

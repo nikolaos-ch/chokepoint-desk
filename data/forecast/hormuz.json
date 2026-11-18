@@ -1,6 +1,6 @@
 {
   "strait": "hormuz",
-  "issued_at": "2026-11-17T23:01:23Z",
+  "issued_at": "2026-11-17T23:59:39Z",
   "last_data_date": "2026-11-15",
   "source": "IMF PortWatch, Daily Chokepoints Data (portwatch.imf.org)",
   "regime": "closed",
@@ -8,7 +8,7 @@
     "Strait of Hormuz: 2.3 transits/day over the 7 days to 2026-11-15, 3% of the 2025 average (before the 2026 conflict) (85.5/day).",
     "Traffic is under 10% of normal: only a handful of ships a day pass, so the strait is effectively closed to normal commercial traffic.",
     "Trend: the last 7 days are 40% below the 28 days before.",
-    "0 independently reported incident(s) in the 7 days to 2026-11-15."
+    "2 independently reported incident(s) in the 7 days to 2026-11-15; 2 further claim(s) not independently confirmed and not counted."
   ],
   "regime_history": [
     {

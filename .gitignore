@@ -37,3 +37,6 @@ public/
 # AIS recorder store (#6): local only, never committed or deployed
 var/
 drafts/
+
+.vercel
+.env*
