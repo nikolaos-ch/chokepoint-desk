@@ -262,6 +262,15 @@
       (refs.length ? '<span class="legend__item"><i class="swatch swatch--dash"></i>Reference lines</span>' : '');
   }
 
+  // viewBox for a chart host. The height comes from the host's CSS --chart-h (styles.css owns
+  // the heights and the width threshold), scaled so the drawn SVG is exactly that tall even
+  // when the viewBox is wider than the host (narrow phones, W floor of 300).
+  function chartBox(host) {
+    var cw = host.clientWidth || 600, W = Math.max(300, cw);
+    var h = parseFloat(getComputedStyle(host).getPropertyValue('--chart-h')) || 240;
+    return { W: W, H: Math.round(h * W / cw * 10) / 10 };
+  }
+
   function renderChartA(T) {
     var host = $('#a-chart');
     host.innerHTML = '';
@@ -270,7 +279,7 @@
     var rows = state.range === 'all' ? all : all.slice(-(+state.range));
     var binned = rows.length > 200;
     if (binned) rows = binWeekly(rows);
-    var W = Math.max(300, host.clientWidth || 600), H = W < 520 ? 230 : 280;
+    var box = chartBox(host), W = box.W, H = box.H;
     var o = { left: 34, right: W - 4, top: 10, bottom: H - 24 };
     var allRefs = state.refs;
     $('#scale-seg').hidden = !allRefs.length;
@@ -453,7 +462,7 @@
     if (!daily.length) { host.innerHTML = '<p class="empty">The forecast file has no daily rows.</p>'; return; }
     var hist = T && T.rows ? T.rows.filter(function (r) { return r.date < daily[0].date; }).slice(-28) : [];
     var dates = hist.map(function (r) { return r.date; }).concat(daily.map(function (r) { return r.date; }));
-    var W = Math.max(300, host.clientWidth || 600), H = W < 520 ? 220 : 260;
+    var box = chartBox(host), W = box.W, H = box.H;
     var o = { left: 34, right: W - 4, top: 10, bottom: H - 24, dates: dates };
     var useRefs = state.scale === 'refs' ? state.refs : [];
     var maxV = Math.max.apply(null, [5].concat(hist.map(function (r) { return r.total; }), daily.map(function (r) { return r.p90; }), useRefs.map(function (r) { return r.value; })));

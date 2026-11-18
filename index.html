@@ -16,7 +16,9 @@
     // Start the data downloads before the page body and app.js are parsed.
     (function () {
       var s = location.hash.slice(1) === 'bab_el_mandeb' ? 'bab_el_mandeb' : 'hormuz';
-      var get = function (p) { return fetch(p, { cache: 'no-cache' }); };
+      // the no-op catch only stops an early network failure from being logged as an
+      // unhandled rejection before app.js picks the promise up (it still sees the error)
+      var get = function (p) { var r = fetch(p, { cache: 'no-cache' }); r.catch(function () {}); return r; };
       window.__desk = { strait: s, req: {
         ['data/transits/' + s + '.json']: get('data/transits/' + s + '.json'),
         ['data/forecast/' + s + '.json']: get('data/forecast/' + s + '.json'),
