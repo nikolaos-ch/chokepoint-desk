@@ -1,6 +1,6 @@
 {
   "strait": "hormuz",
-  "issued_at": "2026-11-18T03:20:58Z",
+  "issued_at": "2026-11-18T03:24:59Z",
   "last_data_date": "2026-11-15",
   "source": "IMF PortWatch, Daily Chokepoints Data (portwatch.imf.org)",
   "regime": "closed",
@@ -265,7 +265,7 @@
         "count_model": {
           "family": "poisson",
           "alpha": 0.0,
-          "dispersion_z": 0.2935324299396831,
+          "dispersion_z": 0.2935324299397061,
           "train_rows": 2534,
           "train_weight_half_life_days": 14,
           "coefficients": {
@@ -414,7 +414,7 @@
         "count_model": {
           "family": "poisson",
           "alpha": 0.0,
-          "dispersion_z": 0.2935324299396831,
+          "dispersion_z": 0.2935324299397061,
           "train_rows": 2534,
           "train_weight_half_life_days": 14,
           "coefficients": {
@@ -563,7 +563,7 @@
         "count_model": {
           "family": "poisson",
           "alpha": 0.0,
-          "dispersion_z": 0.2935324299396831,
+          "dispersion_z": 0.2935324299397061,
           "train_rows": 2534,
           "train_weight_half_life_days": 14,
           "coefficients": {
@@ -712,7 +712,7 @@
         "count_model": {
           "family": "poisson",
           "alpha": 0.0,
-          "dispersion_z": 0.2935324299396831,
+          "dispersion_z": 0.2935324299397061,
           "train_rows": 2534,
           "train_weight_half_life_days": 14,
           "coefficients": {
@@ -861,7 +861,7 @@
         "count_model": {
           "family": "poisson",
           "alpha": 0.0,
-          "dispersion_z": 0.2935324299396831,
+          "dispersion_z": 0.2935324299397061,
           "train_rows": 2534,
           "train_weight_half_life_days": 14,
           "coefficients": {
@@ -965,7 +965,7 @@
     "count_model": {
       "family": "poisson",
       "alpha": 0.0,
-      "dispersion_z": 0.2935324299396831,
+      "dispersion_z": 0.2935324299397061,
       "train_rows": 2534,
       "train_weight_half_life_days": 14,
       "coefficients": {
