@@ -13,6 +13,7 @@ Rebuilding it: run [subset-font](https://www.npmjs.com/package/subset-font) on t
 file with the character list above and `variationAxes: { wght: { min: 400, max: 600 } }`.
 
 Licence: SIL Open Font License 1.1, © The Inter Project Authors
-(https://github.com/rsms/inter, https://openfontlicense.org).
+(https://github.com/rsms/inter). The full text is in `OFL.txt`, copied from Inter's own
+`LICENSE.txt`.
 
 Deploy: `scripts/build_site.sh` must copy this folder into `public/` (`cp -r fonts public/`).

@@ -231,6 +231,7 @@
   // ---- Panel A: transit counter -------------------------------------------
   function renderTiles(T) {
     var rows = T.rows, el = $('#a-tiles');
+    el.hidden = !rows.length; // an empty, visible #a-tiles reserves room while loading
     if (!rows.length) { el.innerHTML = ''; return; }
     var last = rows[rows.length - 1];
     var lastMa = null;
@@ -470,13 +471,17 @@
     drawRefs(g, refs, o);
 
     // band: from the last measured point into the forecast days
-    var up = '', lo = '';
+    var up = '', lo = '', loEdge = '';
     daily.forEach(function (r, i) {
       var x = o.x(h0 + i).toFixed(1);
       up += (i ? 'L' : 'M') + x + ' ' + o.y(r.p90).toFixed(1);
       lo = 'L' + x + ' ' + o.y(r.p10).toFixed(1) + lo;
+      loEdge += (i ? 'L' : 'M') + x + ' ' + o.y(r.p10).toFixed(1);
     });
     svg('path', { class: 'band', d: up + lo + 'Z' }, s);
+    // thin edges so the band's extent reads even where the faint fill does not
+    svg('path', { class: 'band-edge', d: up }, s);
+    svg('path', { class: 'band-edge', d: loEdge }, s);
     var p50 = '';
     if (h0) p50 = 'M' + o.x(h0 - 1).toFixed(1) + ' ' + o.y(hist[h0 - 1].total).toFixed(1);
     daily.forEach(function (r, i) { p50 += (p50 ? 'L' : 'M') + o.x(h0 + i).toFixed(1) + ' ' + o.y(r.p50).toFixed(1); });
@@ -655,7 +660,7 @@
       } else {
         state.transits = null;
         $('#data-stamp').textContent = 'Transit data not available yet.';
-        $('#a-tiles').innerHTML = ''; $('#a-table').innerHTML = ''; $('#a-note').textContent = '';
+        $('#a-tiles').innerHTML = ''; $('#a-tiles').hidden = true; $('#a-table').innerHTML = ''; $('#a-note').textContent = '';
         $('#a-chart').innerHTML = '<p class="empty">No transit file yet (<code>data/transits/' + esc(strait) + '.json</code>).</p>';
       }
       var mock = [];
