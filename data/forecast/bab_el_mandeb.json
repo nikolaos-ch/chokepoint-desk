@@ -1,6 +1,6 @@
 {
   "strait": "bab_el_mandeb",
-  "issued_at": "2026-11-17T23:59:39Z",
+  "issued_at": "2026-11-18T03:20:58Z",
   "last_data_date": "2026-11-15",
   "source": "IMF PortWatch, Daily Chokepoints Data (portwatch.imf.org)",
   "regime": "contested",
@@ -184,73 +184,127 @@
   },
   "by_type": {
     "container": {
-      "p10": 28.4,
-      "p50": 37.3,
-      "p90": 45.6,
+      "p10": 20.0,
+      "p50": 31.0,
+      "p90": 38.0,
       "daily": [
         {
           "date": "2026-11-16",
-          "p10": 2.4,
-          "p50": 5.3,
-          "p90": 9.1
+          "p10": 1.0,
+          "p50": 4.4,
+          "p90": 8.0
         },
         {
           "date": "2026-11-17",
-          "p10": 2.4,
-          "p50": 5.3,
-          "p90": 9.1
+          "p10": 1.0,
+          "p50": 4.4,
+          "p90": 8.0
         },
         {
           "date": "2026-11-18",
-          "p10": 2.4,
-          "p50": 5.3,
-          "p90": 9.1
+          "p10": 1.0,
+          "p50": 4.4,
+          "p90": 8.0
         },
         {
           "date": "2026-11-19",
-          "p10": 2.4,
-          "p50": 5.3,
-          "p90": 9.1
+          "p10": 1.0,
+          "p50": 4.4,
+          "p90": 8.0
         },
         {
           "date": "2026-11-20",
-          "p10": 2.4,
-          "p50": 5.3,
-          "p90": 9.1
+          "p10": 1.0,
+          "p50": 4.4,
+          "p90": 8.0
         },
         {
           "date": "2026-11-21",
-          "p10": 2.4,
-          "p50": 5.3,
-          "p90": 9.1
+          "p10": 1.0,
+          "p50": 4.4,
+          "p90": 8.0
         },
         {
           "date": "2026-11-22",
-          "p10": 2.4,
-          "p50": 5.3,
-          "p90": 9.1
+          "p10": 1.0,
+          "p50": 4.4,
+          "p90": 8.0
         }
       ],
-      "method": "model",
+      "method": "naive_baseline",
       "backtest": {
-        "mae_model": 1.765,
+        "mae_model": 1.805,
         "mae_naive": 1.818,
-        "coverage_80": 0.761,
+        "coverage_80": 0.774,
         "window": {
           "start": "2026-08-10",
           "end": "2026-11-08"
         },
-        "method_used": "model",
+        "method_used": "naive_baseline",
         "naive_kind": "naive_ma7",
-        "outcome": "model_clearly_better",
-        "gain": 0.053,
+        "outcome": "no_meaningful_difference",
+        "gain": 0.013,
         "gain_ci95": [
-          0.006,
-          0.11
+          -0.056,
+          0.1
         ],
-        "rule": "model shown only if the whole 95% CI of (naive MAE - model MAE) is above 0",
-        "half_life_days": 14,
+        "rule": "model shown only if the whole 95% CIs of (naive MAE - model MAE) and of (naive CRPS - model CRPS) are above 0, and the out-of-sample check confirms it",
+        "model_kind": "count_glm",
+        "half_life_days": 112,
         "forecast_points": 637,
+        "crps_model": 1.289,
+        "crps_naive": 1.338,
+        "crps_gain": 0.049,
+        "crps_gain_ci95": [
+          0.015,
+          0.098
+        ],
+        "log_score_model": 2.238,
+        "coverage_80_model": 0.854,
+        "coverage_80_naive": 0.774,
+        "count_model": {
+          "family": "poisson",
+          "alpha": 0.0,
+          "dispersion_z": 1.6159571350886444,
+          "train_rows": 2534,
+          "train_weight_half_life_days": 112,
+          "coefficients": {
+            "intercept": 0.253,
+            "level": 0.9371,
+            "trend": 0.7349,
+            "dow_mon": -0.0318,
+            "dow_tue": -0.0963,
+            "dow_wed": -0.096,
+            "dow_thu": -0.0652,
+            "dow_fri": -0.0781,
+            "dow_sat": -0.1186,
+            "regime_contested": 0.0,
+            "regime_closed": 0.0,
+            "incidents_7d": 0.0
+          },
+          "share": 0.2073
+        },
+        "models_compared": {
+          "count_model": {
+            "mae": 1.805,
+            "coverage_80": 0.854,
+            "crps": 1.289
+          },
+          "naive_ma7": {
+            "mae": 1.818,
+            "coverage_80": 0.774
+          },
+          "naive_last": {
+            "mae": 2.543,
+            "coverage_80": 0.834
+          },
+          "ewma": {
+            "mae": 1.765,
+            "coverage_80": 0.761,
+            "crps": 1.319,
+            "half_life_days": 14
+          }
+        },
         "out_of_sample_check": {
           "tuned_on": {
             "start": "2026-01-28",
@@ -264,17 +318,18 @@
             "start": "2026-08-10",
             "end": "2026-11-08"
           },
-          "chose": "naive_baseline",
-          "outcome_then": "no_meaningful_difference",
-          "gain_then": 0.041,
+          "chose": "model",
+          "outcome_then": "model_clearly_better",
+          "gain_then": 0.087,
           "gain_ci95_then": [
-            -0.002,
-            0.081
+            0.05,
+            0.114
           ],
-          "mae_of_choice": 1.818,
+          "mae_of_choice": 1.805,
           "mae_naive": 1.818,
-          "coverage_80_of_choice": 0.774
-        }
+          "coverage_80_of_choice": 0.854
+        },
+        "verdict": "No meaningful difference between the count model and the naive ma7 baseline over 2026-08-10 to 2026-11-08 (gain +0.01 transits/day, 95% CI -0.06 to +0.10); the simpler baseline is shown. Out-of-sample check: the same rule applied one quarter earlier chose the model, which then had MAE 1.81 vs 1.82 for naive on the most recent window."
       }
     },
     "dry_bulk": {
@@ -327,7 +382,7 @@
       ],
       "method": "naive_baseline",
       "backtest": {
-        "mae_model": 2.405,
+        "mae_model": 2.275,
         "mae_naive": 2.294,
         "coverage_80": 0.834,
         "window": {
@@ -337,14 +392,68 @@
         "method_used": "naive_baseline",
         "naive_kind": "naive_ma7",
         "outcome": "no_meaningful_difference",
-        "gain": -0.111,
+        "gain": 0.019,
         "gain_ci95": [
-          -0.275,
-          0.032
+          -0.077,
+          0.101
         ],
-        "rule": "model shown only if the whole 95% CI of (naive MAE - model MAE) is above 0",
-        "half_life_days": 28,
+        "rule": "model shown only if the whole 95% CIs of (naive MAE - model MAE) and of (naive CRPS - model CRPS) are above 0, and the out-of-sample check confirms it",
+        "model_kind": "count_glm",
+        "half_life_days": 112,
         "forecast_points": 637,
+        "crps_model": 1.574,
+        "crps_naive": 1.64,
+        "crps_gain": 0.066,
+        "crps_gain_ci95": [
+          0.008,
+          0.095
+        ],
+        "log_score_model": 2.431,
+        "coverage_80_model": 0.901,
+        "coverage_80_naive": 0.834,
+        "count_model": {
+          "family": "poisson",
+          "alpha": 0.0,
+          "dispersion_z": 1.6159571350886444,
+          "train_rows": 2534,
+          "train_weight_half_life_days": 112,
+          "coefficients": {
+            "intercept": 0.253,
+            "level": 0.9371,
+            "trend": 0.7349,
+            "dow_mon": -0.0318,
+            "dow_tue": -0.0963,
+            "dow_wed": -0.096,
+            "dow_thu": -0.0652,
+            "dow_fri": -0.0781,
+            "dow_sat": -0.1186,
+            "regime_contested": 0.0,
+            "regime_closed": 0.0,
+            "incidents_7d": 0.0
+          },
+          "share": 0.3147
+        },
+        "models_compared": {
+          "count_model": {
+            "mae": 2.275,
+            "coverage_80": 0.901,
+            "crps": 1.574
+          },
+          "naive_ma7": {
+            "mae": 2.294,
+            "coverage_80": 0.834
+          },
+          "naive_last": {
+            "mae": 3.06,
+            "coverage_80": 0.867
+          },
+          "ewma": {
+            "mae": 2.405,
+            "coverage_80": 0.815,
+            "crps": 1.602,
+            "half_life_days": 28
+          }
+        },
         "out_of_sample_check": {
           "tuned_on": {
             "start": "2026-01-28",
@@ -360,85 +469,140 @@
           },
           "chose": "naive_baseline",
           "outcome_then": "no_meaningful_difference",
-          "gain_then": 0.221,
+          "gain_then": 0.083,
           "gain_ci95_then": [
-            -0.003,
-            0.524
+            -0.233,
+            0.446
           ],
           "mae_of_choice": 2.294,
           "mae_naive": 2.294,
           "coverage_80_of_choice": 0.834
-        }
+        },
+        "verdict": "No meaningful difference between the count model and the naive ma7 baseline over 2026-08-10 to 2026-11-08 (gain +0.02 transits/day, 95% CI -0.08 to +0.10); the simpler baseline is shown. Out-of-sample check: the same rule applied one quarter earlier chose the naive baseline, which then had MAE 2.29 vs 2.29 for naive on the most recent window."
       }
     },
     "general_cargo": {
-      "p10": 15.1,
-      "p50": 23.8,
-      "p90": 33.5,
+      "p10": 8.0,
+      "p50": 21.0,
+      "p90": 31.5,
       "daily": [
         {
           "date": "2026-11-16",
-          "p10": 0.4,
-          "p50": 3.4,
-          "p90": 6.7
+          "p10": 0.0,
+          "p50": 3.0,
+          "p90": 6.4
         },
         {
           "date": "2026-11-17",
-          "p10": 0.4,
-          "p50": 3.4,
-          "p90": 6.7
+          "p10": 0.0,
+          "p50": 3.0,
+          "p90": 6.4
         },
         {
           "date": "2026-11-18",
-          "p10": 0.4,
-          "p50": 3.4,
-          "p90": 6.7
+          "p10": 0.0,
+          "p50": 3.0,
+          "p90": 6.4
         },
         {
           "date": "2026-11-19",
-          "p10": 0.4,
-          "p50": 3.4,
-          "p90": 6.7
+          "p10": 0.0,
+          "p50": 3.0,
+          "p90": 6.4
         },
         {
           "date": "2026-11-20",
-          "p10": 0.4,
-          "p50": 3.4,
-          "p90": 6.7
+          "p10": 0.0,
+          "p50": 3.0,
+          "p90": 6.4
         },
         {
           "date": "2026-11-21",
-          "p10": 0.4,
-          "p50": 3.4,
-          "p90": 6.7
+          "p10": 0.0,
+          "p50": 3.0,
+          "p90": 6.4
         },
         {
           "date": "2026-11-22",
-          "p10": 0.4,
-          "p50": 3.4,
-          "p90": 6.7
+          "p10": 0.0,
+          "p50": 3.0,
+          "p90": 6.4
         }
       ],
-      "method": "model",
+      "method": "naive_baseline",
       "backtest": {
-        "mae_model": 1.896,
+        "mae_model": 1.92,
         "mae_naive": 2.003,
-        "coverage_80": 0.744,
+        "coverage_80": 0.75,
         "window": {
           "start": "2026-08-10",
           "end": "2026-11-08"
         },
-        "method_used": "model",
+        "method_used": "naive_baseline",
         "naive_kind": "naive_ma7",
-        "outcome": "model_clearly_better",
-        "gain": 0.107,
+        "outcome": "no_meaningful_difference",
+        "gain": 0.083,
         "gain_ci95": [
-          0.025,
-          0.163
+          -0.021,
+          0.155
         ],
-        "rule": "model shown only if the whole 95% CI of (naive MAE - model MAE) is above 0",
-        "half_life_days": 10,
+        "rule": "model shown only if the whole 95% CIs of (naive MAE - model MAE) and of (naive CRPS - model CRPS) are above 0, and the out-of-sample check confirms it",
+        "model_kind": "count_glm",
+        "half_life_days": 112,
         "forecast_points": 637,
+        "crps_model": 1.322,
+        "crps_naive": 1.429,
+        "crps_gain": 0.107,
+        "crps_gain_ci95": [
+          0.04,
+          0.148
+        ],
+        "log_score_model": 2.255,
+        "coverage_80_model": 0.807,
+        "coverage_80_naive": 0.75,
+        "count_model": {
+          "family": "poisson",
+          "alpha": 0.0,
+          "dispersion_z": 1.6159571350886444,
+          "train_rows": 2534,
+          "train_weight_half_life_days": 112,
+          "coefficients": {
+            "intercept": 0.253,
+            "level": 0.9371,
+            "trend": 0.7349,
+            "dow_mon": -0.0318,
+            "dow_tue": -0.0963,
+            "dow_wed": -0.096,
+            "dow_thu": -0.0652,
+            "dow_fri": -0.0781,
+            "dow_sat": -0.1186,
+            "regime_contested": 0.0,
+            "regime_closed": 0.0,
+            "incidents_7d": 0.0
+          },
+          "share": 0.1233
+        },
+        "models_compared": {
+          "count_model": {
+            "mae": 1.92,
+            "coverage_80": 0.807,
+            "crps": 1.322
+          },
+          "naive_ma7": {
+            "mae": 2.003,
+            "coverage_80": 0.75
+          },
+          "naive_last": {
+            "mae": 2.63,
+            "coverage_80": 0.826
+          },
+          "ewma": {
+            "mae": 1.896,
+            "coverage_80": 0.744,
+            "crps": 1.335,
+            "half_life_days": 10
+          }
+        },
         "out_of_sample_check": {
           "tuned_on": {
             "start": "2026-01-28",
@@ -454,15 +618,16 @@
           },
           "chose": "naive_baseline",
           "outcome_then": "no_meaningful_difference",
-          "gain_then": 0.053,
+          "gain_then": 0.098,
           "gain_ci95_then": [
-            -0.051,
-            0.142
+            -0.011,
+            0.206
           ],
           "mae_of_choice": 2.003,
           "mae_naive": 2.003,
           "coverage_80_of_choice": 0.75
-        }
+        },
+        "verdict": "No meaningful difference between the count model and the naive ma7 baseline over 2026-08-10 to 2026-11-08 (gain +0.08 transits/day, 95% CI -0.02 to +0.16); the simpler baseline is shown. Out-of-sample check: the same rule applied one quarter earlier chose the naive baseline, which then had MAE 2.00 vs 2.00 for naive on the most recent window."
       }
     },
     "roro": {
@@ -515,7 +680,7 @@
       ],
       "method": "naive_baseline",
       "backtest": {
-        "mae_model": 0.894,
+        "mae_model": 0.843,
         "mae_naive": 0.925,
         "coverage_80": 0.841,
         "window": {
@@ -524,15 +689,69 @@
         },
         "method_used": "naive_baseline",
         "naive_kind": "naive_ma7",
-        "outcome": "no_meaningful_difference",
-        "gain": 0.031,
+        "outcome": "not_confirmed_out_of_sample",
+        "gain": 0.082,
         "gain_ci95": [
-          -0.001,
-          0.078
+          0.026,
+          0.154
         ],
-        "rule": "model shown only if the whole 95% CI of (naive MAE - model MAE) is above 0",
-        "half_life_days": 28,
+        "rule": "model shown only if the whole 95% CIs of (naive MAE - model MAE) and of (naive CRPS - model CRPS) are above 0, and the out-of-sample check confirms it",
+        "model_kind": "count_glm",
+        "half_life_days": 112,
         "forecast_points": 637,
+        "crps_model": 0.583,
+        "crps_naive": 0.634,
+        "crps_gain": 0.051,
+        "crps_gain_ci95": [
+          0.022,
+          0.092
+        ],
+        "log_score_model": 1.44,
+        "coverage_80_model": 0.967,
+        "coverage_80_naive": 0.841,
+        "count_model": {
+          "family": "poisson",
+          "alpha": 0.0,
+          "dispersion_z": 1.6159571350886444,
+          "train_rows": 2534,
+          "train_weight_half_life_days": 112,
+          "coefficients": {
+            "intercept": 0.253,
+            "level": 0.9371,
+            "trend": 0.7349,
+            "dow_mon": -0.0318,
+            "dow_tue": -0.0963,
+            "dow_wed": -0.096,
+            "dow_thu": -0.0652,
+            "dow_fri": -0.0781,
+            "dow_sat": -0.1186,
+            "regime_contested": 0.0,
+            "regime_closed": 0.0,
+            "incidents_7d": 0.0
+          },
+          "share": 0.0412
+        },
+        "models_compared": {
+          "count_model": {
+            "mae": 0.843,
+            "coverage_80": 0.967,
+            "crps": 0.583
+          },
+          "naive_ma7": {
+            "mae": 0.925,
+            "coverage_80": 0.841
+          },
+          "naive_last": {
+            "mae": 1.187,
+            "coverage_80": 0.92
+          },
+          "ewma": {
+            "mae": 0.894,
+            "coverage_80": 0.87,
+            "crps": 0.586,
+            "half_life_days": 28
+          }
+        },
         "out_of_sample_check": {
           "tuned_on": {
             "start": "2026-01-28",
@@ -548,15 +767,16 @@
           },
           "chose": "naive_baseline",
           "outcome_then": "no_meaningful_difference",
-          "gain_then": 0.061,
+          "gain_then": 0.091,
           "gain_ci95_then": [
-            -0.012,
-            0.137
+            -0.023,
+            0.193
           ],
           "mae_of_choice": 0.925,
           "mae_naive": 0.925,
           "coverage_80_of_choice": 0.841
-        }
+        },
+        "verdict": "The count model beat the naive ma7 baseline over 2026-08-10 to 2026-11-08 (gain +0.08 transits/day, 95% CI +0.03 to +0.15), but the out-of-sample check did not confirm it, so the baseline is shown. Out-of-sample check: the same rule applied one quarter earlier chose the naive baseline, which then had MAE 0.93 vs 0.93 for naive on the most recent window."
       }
     },
     "tanker": {
@@ -609,7 +829,7 @@
       ],
       "method": "naive_baseline",
       "backtest": {
-        "mae_model": 2.72,
+        "mae_model": 2.722,
         "mae_naive": 2.769,
         "coverage_80": 0.823,
         "window": {
@@ -619,14 +839,68 @@
         "method_used": "naive_baseline",
         "naive_kind": "naive_ma7",
         "outcome": "no_meaningful_difference",
-        "gain": 0.049,
+        "gain": 0.047,
         "gain_ci95": [
-          -0.019,
-          0.113
+          -0.05,
+          0.14
         ],
-        "rule": "model shown only if the whole 95% CI of (naive MAE - model MAE) is above 0",
-        "half_life_days": 5,
+        "rule": "model shown only if the whole 95% CIs of (naive MAE - model MAE) and of (naive CRPS - model CRPS) are above 0, and the out-of-sample check confirms it",
+        "model_kind": "count_glm",
+        "half_life_days": 112,
         "forecast_points": 637,
+        "crps_model": 1.874,
+        "crps_naive": 1.97,
+        "crps_gain": 0.096,
+        "crps_gain_ci95": [
+          0.013,
+          0.184
+        ],
+        "log_score_model": 2.614,
+        "coverage_80_model": 0.846,
+        "coverage_80_naive": 0.823,
+        "count_model": {
+          "family": "poisson",
+          "alpha": 0.0,
+          "dispersion_z": 1.6159571350886444,
+          "train_rows": 2534,
+          "train_weight_half_life_days": 112,
+          "coefficients": {
+            "intercept": 0.253,
+            "level": 0.9371,
+            "trend": 0.7349,
+            "dow_mon": -0.0318,
+            "dow_tue": -0.0963,
+            "dow_wed": -0.096,
+            "dow_thu": -0.0652,
+            "dow_fri": -0.0781,
+            "dow_sat": -0.1186,
+            "regime_contested": 0.0,
+            "regime_closed": 0.0,
+            "incidents_7d": 0.0
+          },
+          "share": 0.3135
+        },
+        "models_compared": {
+          "count_model": {
+            "mae": 2.722,
+            "coverage_80": 0.846,
+            "crps": 1.874
+          },
+          "naive_ma7": {
+            "mae": 2.769,
+            "coverage_80": 0.823
+          },
+          "naive_last": {
+            "mae": 3.631,
+            "coverage_80": 0.857
+          },
+          "ewma": {
+            "mae": 2.72,
+            "coverage_80": 0.81,
+            "crps": 1.956,
+            "half_life_days": 5
+          }
+        },
         "out_of_sample_check": {
           "tuned_on": {
             "start": "2026-01-28",
@@ -642,22 +916,24 @@
           },
           "chose": "naive_baseline",
           "outcome_then": "no_meaningful_difference",
-          "gain_then": 0.025,
+          "gain_then": 0.008,
           "gain_ci95_then": [
-            -0.187,
-            0.24
+            -0.29,
+            0.33
           ],
           "mae_of_choice": 2.769,
           "mae_naive": 2.769,
           "coverage_80_of_choice": 0.823
-        }
+        },
+        "verdict": "No meaningful difference between the count model and the naive ma7 baseline over 2026-08-10 to 2026-11-08 (gain +0.05 transits/day, 95% CI -0.05 to +0.14); the simpler baseline is shown. Out-of-sample check: the same rule applied one quarter earlier chose the naive baseline, which then had MAE 2.77 vs 2.77 for naive on the most recent window."
       }
     }
   },
-  "by_type_note": "Each ship type is forecast separately, so the per-type p50s need not add up to the total p50, and p10/p90 never add up (ranges do not sum).",
+  "by_type_note": "Each ship type has its own method choice (count-model share of the total, or its own naive baseline), so the per-type p50s need not add up to the total p50, and p10/p90 never add up (ranges do not sum).",
+  "target_note": "Target series: IMF PortWatch daily transit count (AIS-based). For 5-11 Nov 2026 UKMTO reported 308 Hormuz transits (82 AIS-observed) against PortWatch's 27, so this forecasts the settlement series, not true traffic.",
   "method": "naive_baseline",
   "backtest": {
-    "mae_model": 4.493,
+    "mae_model": 4.488,
     "mae_naive": 4.622,
     "coverage_80": 0.846,
     "window": {
@@ -667,14 +943,67 @@
     "method_used": "naive_baseline",
     "naive_kind": "naive_ma7",
     "outcome": "no_meaningful_difference",
-    "gain": 0.129,
+    "gain": 0.134,
     "gain_ci95": [
-      -0.013,
-      0.238
+      -0.122,
+      0.317
     ],
     "rule": "model shown only if the whole 95% CI of (naive MAE - model MAE) is above 0",
-    "half_life_days": 7,
+    "model_kind": "count_glm",
+    "half_life_days": 112,
     "forecast_points": 637,
+    "crps_model": 3.133,
+    "crps_naive": 3.303,
+    "crps_gain": 0.17,
+    "crps_gain_ci95": [
+      -0.016,
+      0.289
+    ],
+    "log_score_model": 3.118,
+    "coverage_80_model": 0.835,
+    "coverage_80_naive": 0.846,
+    "count_model": {
+      "family": "poisson",
+      "alpha": 0.0,
+      "dispersion_z": 1.6159571350886444,
+      "train_rows": 2534,
+      "train_weight_half_life_days": 112,
+      "coefficients": {
+        "intercept": 0.253,
+        "level": 0.9371,
+        "trend": 0.7349,
+        "dow_mon": -0.0318,
+        "dow_tue": -0.0963,
+        "dow_wed": -0.096,
+        "dow_thu": -0.0652,
+        "dow_fri": -0.0781,
+        "dow_sat": -0.1186,
+        "regime_contested": 0.0,
+        "regime_closed": 0.0,
+        "incidents_7d": 0.0
+      }
+    },
+    "models_compared": {
+      "count_model": {
+        "mae": 4.488,
+        "coverage_80": 0.835,
+        "crps": 3.133
+      },
+      "naive_ma7": {
+        "mae": 4.622,
+        "coverage_80": 0.846
+      },
+      "naive_last": {
+        "mae": 6.02,
+        "coverage_80": 0.843
+      },
+      "ewma": {
+        "mae": 4.493,
+        "coverage_80": 0.862,
+        "crps": 3.226,
+        "half_life_days": 7
+      }
+    },
     "out_of_sample_check": {
       "tuned_on": {
         "start": "2026-01-28",
@@ -690,18 +1019,18 @@
       },
       "chose": "naive_baseline",
       "outcome_then": "no_meaningful_difference",
-      "gain_then": 0.111,
+      "gain_then": -0.035,
       "gain_ci95_then": [
-        -0.395,
-        0.807
+        -0.652,
+        0.78
       ],
       "mae_of_choice": 4.622,
       "mae_naive": 4.622,
       "coverage_80_of_choice": 0.846
     },
-    "verdict": "No meaningful difference between the model and the naive ma7 baseline over 2026-08-10 to 2026-11-08 (gain +0.13 transits/day, 95% CI -0.01 to +0.24); the simpler baseline is shown. Out-of-sample check: the same rule applied one quarter earlier chose the naive baseline, which then had MAE 4.62 vs 4.62 for naive on the most recent window."
+    "verdict": "No meaningful difference between the count model and the naive ma7 baseline over 2026-08-10 to 2026-11-08 (gain +0.13 transits/day, 95% CI -0.12 to +0.32); the simpler baseline is shown. Out-of-sample check: the same rule applied one quarter earlier chose the naive baseline, which then had MAE 4.62 vs 4.62 for naive on the most recent window."
   },
-  "method_note": "Forecast = the last 7-day average, repeated for 7 days. A weighted-average model showed no clear gain over it from 2026-08-10 to 2026-11-08, so the simpler method is shown. Range = 10th-90th percentile of its past errors.",
+  "method_note": "Forecast = the last 7-day average, repeated for 7 days; range from its past errors. A count model showed no clear gain from 2026-08-10 to 2026-11-08, so it is not shown. Forecasts PortWatch's AIS-based count, the series the settlement rules in panel B use; UKMTO's weekly figures are higher, partly because each source counts differently.",
   "baseline": {
     "mean_per_day": 74.6,
     "period": "2023-01-01 to 2023-10-31",

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Synthetic fixture: invented names and numbers, UK Sanctions List (FCDO) XML shape. -->
+<Designations xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DateGenerated>17/11/2026</DateGenerated>
+  <Designation>
+    <LastUpdated>01/10/2026</LastUpdated>
+    <DateDesignated>09/05/2025</DateDesignated>
+    <UniqueID>RUS9001</UniqueID>
+    <Names>
+      <Name><Name6>Test Tanker One</Name6><NameType>Primary name</NameType></Name>
+    </Names>
+    <RegimeName>The Russia (Sanctions) (EU Exit) Regulations 2019</RegimeName>
+    <IndividualEntityShip>Ship</IndividualEntityShip>
+    <ShipDetails><Ship>
+      <IMONumbers><IMONumber>IMO1234567</IMONumber></IMONumbers>
+      <CurrentOwnerOperators><CurrentOwnerOperator>Example Ship Management Ltd </CurrentOwnerOperator></CurrentOwnerOperators>
+      <CurrentBelievedFlagOfShips><CurrentBelievedFlagOfShip>Gabon</CurrentBelievedFlagOfShip></CurrentBelievedFlagOfShips>
+    </Ship></ShipDetails>
+  </Designation>
+  <Designation>
+    <LastUpdated>02/10/2026</LastUpdated>
+    <DateDesignated>15/10/2026</DateDesignated>
+    <UniqueID>RUS9002</UniqueID>
+    <Names><Name><Name6>Test Carrier Two</Name6><NameType>Primary name</NameType></Name></Names>
+    <RegimeName>The Russia (Sanctions) (EU Exit) Regulations 2019</RegimeName>
+    <IndividualEntityShip>Ship</IndividualEntityShip>
+    <ShipDetails><Ship><IMONumbers><IMONumber>2222224</IMONumber></IMONumbers></Ship></ShipDetails>
+  </Designation>
+  <Designation>
+    <DateDesignated>01/01/2020</DateDesignated>
+    <UniqueID>RUS9003</UniqueID>
+    <Names><Name><Name6>Example Person</Name6><NameType>Primary name</NameType></Name></Names>
+    <IndividualEntityShip>Individual</IndividualEntityShip>
+  </Designation>
+</Designations>

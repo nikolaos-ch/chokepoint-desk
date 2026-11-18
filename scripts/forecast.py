@@ -6,8 +6,12 @@ Reads   data/transits/<strait>.json   (written by the PortWatch pipeline, #2)
 Writes  data/forecast/<strait>.json   (contract in ticket #1, shapes in data/README.md)
 
 Method (deliberately simple and explainable):
-  * Model  = exponentially weighted mean of recent daily transits, repeated
-    for the next 7 days.
+  * Model  = the strait-level count model of scripts/strait_model.py (#27): a
+    negative-binomial (or Poisson, per a dispersion test) regression on the
+    recent level, trend, weekday, regime and independently reported incidents;
+    per-type forecasts = total x smoothed type share. (Until 18 Nov 2026 the
+    model was an exponentially weighted mean; it is still scored, as
+    backtest.models_compared.ewma, for reference.)
   * Naive  = the better (on the selection window) of "mean of the last 7 days"
     and "same as yesterday".
   * Range  = level + empirical 10th/90th percentile of the method's own past
@@ -39,6 +43,9 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import strait_model as SM  # noqa: E402
 
 STRAITS = ("hormuz", "bab_el_mandeb")
 SHIP_TYPES = ("container", "dry_bulk", "general_cargo", "roro", "tanker")
@@ -212,6 +219,27 @@ class Forecaster:
             ins[k, ok] = ((a[ok] >= p["p10"]) & (a[ok] <= p["p90"])).astype(float)
         return ae, ins
 
+    def crps_rows(self, idx) -> np.ndarray:
+        """CRPS of the empirical predictive distribution level + past errors
+        (the same errors the p10/p90 come from), clipped at 0."""
+        out = np.full((len(idx), HORIZON), np.nan)
+        for k, i in enumerate(idx):
+            lv = self.lev[i]
+            hi = i - HORIZON
+            lo = max(0, hi - ERROR_WINDOW + 1)
+            if np.isnan(lv) or hi < lo:
+                continue
+            d = self.err[lo: hi + 1].ravel()
+            d = d[~np.isnan(d)]
+            if len(d) < 30:
+                continue
+            x = np.maximum(lv + d, 0.0)
+            for hh in range(HORIZON):
+                yv = self.fut[i, hh]
+                if not np.isnan(yv):
+                    out[k, hh] = SM.crps_sample(x, yv)
+        return out
+
 
 def mae_cov(ae: np.ndarray, ins: np.ndarray) -> tuple[float | None, float | None, int]:
     n = int((~np.isnan(ae)).sum())
@@ -315,44 +343,83 @@ def windows(n: int) -> dict:
     return {"tune": tune, "select": sel, "report": rep}
 
 
-def choose(y: pd.Series, tune_idx, select_idx) -> dict:
-    """The full procedure: tune the half-life on tune_idx, then pick model vs the
-    better naive on select_idx with the paired bootstrap CI rule."""
-    hl = choose_half_life(y, tune_idx)
-    fcs = {"model": Forecaster(f"ewma_hl{hl:g}", ewma_levels(y, hl), y),
+def _mae_of(f, idx):
+    return mae_cov(*f.score_rows(idx))[0]
+
+
+def _mean(a: np.ndarray) -> float | None:
+    return None if a.size == 0 or np.all(np.isnan(a)) else float(np.nanmean(a))
+
+
+def choose(y: pd.Series, tune_idx, select_idx, make_model, require_crps: bool = False) -> dict:
+    """The full procedure: build the model tuned on tune_idx, then pick model vs the
+    better naive on select_idx with the paired block-bootstrap CI rule (on MAE, as
+    the page reports MAE). CRPS of both, and the EWMA reference, are recorded too.
+    require_crps (per-type rule, decision 18 Nov 2026): the model also needs the
+    whole 95% CI of its CRPS gain above 0 to count as clearly better."""
+    model = make_model(tune_idx)
+    hl_ewma = choose_half_life(y, tune_idx)
+    fcs = {"model": model,
            "naive_ma7": Forecaster("naive_ma7", ma7_levels(y), y),
-           "naive_last": Forecaster("naive_last", last_levels(y), y)}
+           "naive_last": Forecaster("naive_last", last_levels(y), y),
+           "ewma": Forecaster(f"ewma_hl{hl_ewma:g}", ewma_levels(y, hl_ewma), y)}
     sc = {k: f.score_rows(select_idx) for k, f in fcs.items()}
     mae = {k: mae_cov(*v)[0] for k, v in sc.items()}
     nk = min(("naive_ma7", "naive_last"), key=lambda k: mae[k] if mae[k] is not None else math.inf)
     gain, lo, hi = paired_gain_ci(sc["model"][0], sc[nk][0])
-    if lo is not None and lo > 0:
+    crps_ok = True
+    crps_sel = None
+    if require_crps:
+        crps_sel = paired_gain_ci(model.crps_rows(select_idx), fcs[nk].crps_rows(select_idx))
+        crps_ok = crps_sel[1] is not None and crps_sel[1] > 0
+    if lo is not None and lo > 0 and crps_ok:
         outcome = "model_clearly_better"
     elif hi is not None and hi < 0:
         outcome = "naive_clearly_better"
     else:
         outcome = "no_meaningful_difference"
     used = "model" if outcome == "model_clearly_better" else nk
-    return {"fcs": fcs, "half_life": hl, "naive_key": nk, "used": used, "outcome": outcome,
-            "mae_model": mae["model"], "mae_naive": mae[nk], "gain": gain, "ci": (lo, hi)}
+    return {"fcs": fcs, "half_life": getattr(model, "hl", None), "ewma_half_life": hl_ewma,
+            "naive_key": nk, "used": used, "outcome": outcome,
+            "mae_model": mae["model"], "mae_naive": mae[nk], "gain": gain, "ci": (lo, hi),
+            "require_crps": require_crps, "crps_ci_select": crps_sel}
 
 
-def forecast_series(y: pd.Series, w: dict, issue_i: int) -> dict:
+def forecast_series(y: pd.Series, w: dict, issue_i: int, make_model, require_crps: bool = False) -> dict:
     """live  = choose(tune=SELECT, select=REPORT): today's method, from the most recent data.
     check = choose(tune=TUNE, select=SELECT), then scored on REPORT, which it never saw:
-            an honest out-of-sample test of the choose-then-forecast procedure."""
-    live = choose(y, w["select"], w["report"])
-    check = choose(y, w["tune"], w["select"])
+            an honest out-of-sample test of the choose-then-forecast procedure.
+    make_model(tune_idx) returns the model tuned on that window (strait_model.py)."""
+    live = choose(y, w["select"], w["report"], make_model, require_crps)
+    check = choose(y, w["tune"], w["select"], make_model, require_crps)
+    if require_crps and live["used"] == "model":
+        # Per-type rule (decision 18 Nov 2026): a model win must also be confirmed
+        # out of sample: the same procedure one window earlier must have chosen the
+        # model, and that choice must have beaten its naive on REPORT, unseen data.
+        cm = mae_cov(*check["fcs"]["model"].score_rows(w["report"]))[0]
+        cn = mae_cov(*check["fcs"][check["naive_key"]].score_rows(w["report"]))[0]
+        if not (check["used"] == "model" and cm is not None and cn is not None and cm < cn):
+            live["used"] = live["naive_key"]
+            live["outcome"] = "not_confirmed_out_of_sample"
     pred = live["fcs"][live["used"]].predict(issue_i)
     if pred is None:  # not enough history for intervals: flat naive point
         lv = float(ma7_levels(y).iloc[issue_i])
         pred = {"p50": lv, "p10": lv, "p90": lv, "w50": 7 * lv, "w10": 7 * lv, "w90": 7 * lv}
-    rep_live = {k: mae_cov(*live["fcs"][k].score_rows(w["report"])) for k in ("model", live["naive_key"])}
-    rep_used = mae_cov(*live["fcs"][live["used"]].score_rows(w["report"]))
-    chk_choice = mae_cov(*check["fcs"][check["used"]].score_rows(w["report"]))
-    chk_naive = mae_cov(*check["fcs"][check["naive_key"]].score_rows(w["report"]))
+    rep = w["report"]
+    nk = live["naive_key"]
+    m, nv = live["fcs"]["model"], live["fcs"][nk]
+    crps_m, crps_n = m.crps_rows(rep), nv.crps_rows(rep)
+    rep_live = {k: mae_cov(*live["fcs"][k].score_rows(rep)) for k in ("model", nk, "naive_ma7", "naive_last", "ewma")}
+    rep_used = mae_cov(*live["fcs"][live["used"]].score_rows(rep))
+    chk_choice = mae_cov(*check["fcs"][check["used"]].score_rows(rep))
+    chk_naive = mae_cov(*check["fcs"][check["naive_key"]].score_rows(rep))
     return {"pred": pred, "live": live, "check": check, "rep_live": rep_live, "rep_used": rep_used,
-            "chk_choice": chk_choice, "chk_naive": chk_naive}
+            "chk_choice": chk_choice, "chk_naive": chk_naive,
+            "crps": {"model": _mean(crps_m), "naive": _mean(crps_n),
+                     "ci": paired_gain_ci(crps_m, crps_n),
+                     "ewma": _mean(live["fcs"]["ewma"].crps_rows(rep)),
+                     "log_score_model": _mean(m.log_rows(rep))},
+            "model_info": m.info(issue_i)}
 
 
 def _win(y: pd.Series, r: range) -> dict:
@@ -370,10 +437,12 @@ def series_backtest(y: pd.Series, w: dict, f: dict) -> dict:
     nk = L["naive_key"]
     lo, hi = L["ci"]
     clo, chi = C["ci"]
+    cg, clo2, chi2 = f["crps"]["ci"]
+    rl = f["rep_live"]
     return {
         # contract fields (data/README.md): most recent window, horizons 1-7
-        "mae_model": _rd(f["rep_live"]["model"][0]),
-        "mae_naive": _rd(f["rep_live"][nk][0]),
+        "mae_model": _rd(rl["model"][0]),
+        "mae_naive": _rd(rl[nk][0]),
         "coverage_80": _rd(f["rep_used"][1]),          # of the method shown today
         "window": _win(y, w["report"]),
         # how today's method was chosen (on that same most recent window)
@@ -381,9 +450,27 @@ def series_backtest(y: pd.Series, w: dict, f: dict) -> dict:
         "naive_kind": nk,
         "outcome": L["outcome"],
         "gain": _rd(L["gain"]), "gain_ci95": [_rd(lo), _rd(hi)],
-        "rule": "model shown only if the whole 95% CI of (naive MAE - model MAE) is above 0",
-        "half_life_days": L["half_life"],
-        "forecast_points": f["rep_live"]["model"][2],
+        "rule": ("model shown only if the whole 95% CIs of (naive MAE - model MAE) and of "
+                 "(naive CRPS - model CRPS) are above 0, and the out-of-sample check confirms it"
+                 if L["require_crps"] else
+                 "model shown only if the whole 95% CI of (naive MAE - model MAE) is above 0"),
+        "model_kind": "count_glm",
+        "half_life_days": L["half_life"],             # training-weight half-life of the count model
+        "forecast_points": rl["model"][2],
+        # proper scoring rule for the whole predictive distribution (lower is better)
+        "crps_model": _rd(f["crps"]["model"]), "crps_naive": _rd(f["crps"]["naive"]),
+        "crps_gain": _rd(cg), "crps_gain_ci95": [_rd(clo2), _rd(chi2)],
+        "log_score_model": _rd(f["crps"]["log_score_model"]),
+        "coverage_80_model": _rd(rl["model"][1]), "coverage_80_naive": _rd(rl[nk][1]),
+        "count_model": f["model_info"],
+        "models_compared": {
+            "count_model": {"mae": _rd(rl["model"][0]), "coverage_80": _rd(rl["model"][1]),
+                            "crps": _rd(f["crps"]["model"])},
+            "naive_ma7": {"mae": _rd(rl["naive_ma7"][0]), "coverage_80": _rd(rl["naive_ma7"][1])},
+            "naive_last": {"mae": _rd(rl["naive_last"][0]), "coverage_80": _rd(rl["naive_last"][1])},
+            "ewma": {"mae": _rd(rl["ewma"][0]), "coverage_80": _rd(rl["ewma"][1]),
+                     "crps": _rd(f["crps"]["ewma"]), "half_life_days": L["ewma_half_life"]},
+        },
         # honest check: the same procedure run one window earlier, scored on data it never saw
         "out_of_sample_check": {
             "tuned_on": _win(y, w["tune"]), "chosen_on": _win(y, w["select"]), "scored_on": _win(y, w["report"]),
@@ -402,12 +489,22 @@ def verdict_text(f: dict, y: pd.Series, w: dict) -> str:
     ci = f"gain {L['gain']:+.2f} transits/day, 95% CI {lo:+.2f} to {hi:+.2f}" if lo is not None else "CI unavailable"
     rw = _win(y, w["report"])
     if L["outcome"] == "model_clearly_better":
-        head = f"Model is clearly better than the {nk} baseline over {rw['start']} to {rw['end']} ({ci}); the model is shown."
+        head = (f"The count model is clearly better than the {nk} baseline over {rw['start']} to {rw['end']} "
+                f"({ci}); the model is shown.")
     elif L["outcome"] == "naive_clearly_better":
-        head = f"The {nk} baseline is clearly better than the model over {rw['start']} to {rw['end']} ({ci}); the baseline is shown."
+        head = (f"The {nk} baseline is clearly better than the count model over {rw['start']} to {rw['end']} "
+                f"({ci}); the baseline is shown.")
     else:
-        head = (f"No meaningful difference between the model and the {nk} baseline over "
+        head = (f"No meaningful difference between the count model and the {nk} baseline over "
                 f"{rw['start']} to {rw['end']} ({ci}); the simpler baseline is shown.")
+        cs = L.get("crps_ci_select")
+        if L.get("require_crps") and lo is not None and lo > 0 and cs and cs[1] is not None:
+            head = (f"The count model's MAE gain over the {nk} baseline is clear over {rw['start']} to "
+                    f"{rw['end']} ({ci}), but its CRPS gain is not (95% CI {cs[1]:+.2f} to {cs[2]:+.2f}); "
+                    f"per-type models need both, so the baseline is shown.")
+    if L["outcome"] == "not_confirmed_out_of_sample":
+        head = (f"The count model beat the {nk} baseline over {rw['start']} to {rw['end']} ({ci}), but the "
+                f"out-of-sample check did not confirm it, so the baseline is shown.")
     cm, cn = f["chk_choice"][0], f["chk_naive"][0]
     tail = ""
     if cm is not None and cn is not None:
@@ -415,6 +512,13 @@ def verdict_text(f: dict, y: pd.Series, w: dict) -> str:
         tail = (f" Out-of-sample check: the same rule applied one quarter earlier chose the {chose}, "
                 f"which then had MAE {cm:.2f} vs {cn:.2f} for naive on the most recent window.")
     return head + tail
+
+
+def _days(p: dict, dates: list[str]) -> list[dict]:
+    if "days" in p:
+        return [{"date": d, "p10": r1(q["p10"]), "p50": r1(q["p50"]), "p90": r1(q["p90"])}
+                for d, q in zip(dates, p["days"])]
+    return [{"date": d, "p10": r1(p["p10"]), "p50": r1(p["p50"]), "p90": r1(p["p90"])} for d in dates]
 
 
 def run_strait(strait: str, data_dir: Path, now: dt.datetime) -> dict:
@@ -426,7 +530,21 @@ def run_strait(strait: str, data_dir: Path, now: dt.datetime) -> dict:
     last_date = y.index[issue_i]
     w = windows(n)
 
-    total = forecast_series(y, w, issue_i)
+    # Context for the count model (#27): regime and incidents known at each day.
+    baseline_cfg = BASELINES[strait]
+    base_val = float(y[baseline_cfg["start"]: baseline_cfg["end"]].mean())
+    ledger = data_dir / "ledger.json"
+    inc_series = SM.incident_series(SM.ledger_rows(ledger), STRAIT_ALIASES[strait], y.index)
+    ctx = SM.Context(y, base_val, inc_series, OPEN_RATIO, CLOSED_RATIO)
+    tuned: dict[tuple, SM.CountModel] = {}
+
+    def make_total(tune_idx):
+        key = (tune_idx.start, tune_idx.stop)
+        if key not in tuned:
+            tuned[key] = SM.tune(ctx, tune_idx, _mae_of)
+        return tuned[key]
+
+    total = forecast_series(y, w, issue_i, make_total)
     p = total["pred"]
     dates = [(last_date + pd.Timedelta(days=h)).date().isoformat() for h in range(1, HORIZON + 1)]
 
@@ -435,20 +553,18 @@ def run_strait(strait: str, data_dir: Path, now: dt.datetime) -> dict:
         s = df[t]
         if s.notna().sum() < TUNE_DAYS + SELECT_DAYS + REPORT_DAYS:
             continue
-        ft = forecast_series(s, w, issue_i)
+        ft = forecast_series(s, w, issue_i, lambda idx, s=s: SM.ShareModel(make_total(idx), s),
+                             require_crps=True)
         q = ft["pred"]
         by_type[t] = {
             # p10/p50/p90 are 7-day totals (data/README.md)
             "p10": r1(q["w10"]), "p50": r1(q["w50"]), "p90": r1(q["w90"]),
-            "daily": [{"date": d, "p10": r1(q["p10"]), "p50": r1(q["p50"]), "p90": r1(q["p90"])} for d in dates],
+            "daily": _days(q, dates),
             "method": _label(ft["live"]["used"]),
-            "backtest": series_backtest(s, w, ft),
+            "backtest": {**series_backtest(s, w, ft), "verdict": verdict_text(ft, s, w)},
         }
 
     # Regime: today's label plus the last 30 days, each computed only from data to that day.
-    baseline_cfg = BASELINES[strait]
-    base_val = float(y[baseline_cfg["start"]: baseline_cfg["end"]].mean())
-    ledger = data_dir / "ledger.json"
     history = []
     for i in range(max(0, n - 30), n):
         inc, cl = load_incidents(ledger, strait, y.index[i])
@@ -461,17 +577,17 @@ def run_strait(strait: str, data_dir: Path, now: dt.datetime) -> dict:
     bt["verdict"] = verdict_text(total, y, w)
     L = total["live"]
     rep_w = bt["window"]
+    target = ("Forecasts PortWatch's AIS-based count, the series the settlement rules in panel B use; "
+              "UKMTO's weekly figures are higher, partly because each source counts differently.")
     if L["used"] == "model":
-        method_note = (f"Forecast = recent daily transits averaged with weights that halve every "
-                       f"{L['half_life']:g} days. Shown because it beat a naive baseline clearly (95% confidence) "
-                       f"over {rep_w['start']} to {rep_w['end']}. Range = 10th-90th percentile of its past errors.")
+        method_note = (f"Forecast = a count model on recent level, trend, weekday, regime and incidents. "
+                       f"Shown because it clearly beat a naive baseline from {rep_w['start']} to {rep_w['end']}. "
+                       f"{target}")
     else:
         what = "the last 7-day average" if L["naive_key"] == "naive_ma7" else "yesterday's count"
-        how = ("did worse than it" if L["outcome"] == "naive_clearly_better"
-               else "showed no clear gain over it")
-        method_note = (f"Forecast = {what}, repeated for 7 days. A weighted-average model {how} "
-                       f"from {rep_w['start']} to {rep_w['end']}, so the simpler method is shown. "
-                       f"Range = 10th-90th percentile of its past errors.")
+        how = "did worse" if L["outcome"] == "naive_clearly_better" else "showed no clear gain"
+        method_note = (f"Forecast = {what}, repeated for 7 days; range from its past errors. A count model "
+                       f"{how} from {rep_w['start']} to {rep_w['end']}, so it is not shown. {target}")
 
     return {
         "strait": strait,
@@ -482,11 +598,15 @@ def run_strait(strait: str, data_dir: Path, now: dt.datetime) -> dict:
         "regime_reasons": reasons,
         "regime_history": history,
         "horizon_days": HORIZON,
-        "daily": [{"date": d, "p10": r1(p["p10"]), "p50": r1(p["p50"]), "p90": r1(p["p90"])} for d in dates],
+        "daily": _days(p, dates),
         "weekly_total": {"p10": r1(p["w10"]), "p50": r1(p["w50"]), "p90": r1(p["w90"])},
         "by_type": by_type,
-        "by_type_note": ("Each ship type is forecast separately, so the per-type p50s need not add up "
-                         "to the total p50, and p10/p90 never add up (ranges do not sum)."),
+        "by_type_note": ("Each ship type has its own method choice (count-model share of the total, or its own "
+                         "naive baseline), so the per-type p50s need not add up to the total p50, and p10/p90 "
+                         "never add up (ranges do not sum)."),
+        "target_note": ("Target series: IMF PortWatch daily transit count (AIS-based). For 5-11 Nov 2026 UKMTO "
+                        "reported 308 Hormuz transits (82 AIS-observed) against PortWatch's 27, so this forecasts "
+                        "the settlement series, not true traffic."),
         "method": _label(L["used"]),
         "backtest": bt,
         "method_note": method_note,
@@ -521,7 +641,9 @@ def main(argv=None) -> int:
         b = res["backtest"]
         print(f"[forecast] {strait}: regime={res['regime']} week p50={res['weekly_total']['p50']} "
               f"gain={b['gain']} CI={b['gain_ci95']} -> {res['method']} ({b['outcome']}); "
-              f"MAE model={b['mae_model']} naive={b['mae_naive']} cov80={b['coverage_80']}")
+              f"MAE model={b['mae_model']} naive={b['mae_naive']} cov80={b['coverage_80']} "
+              f"CRPS model={b['crps_model']} naive={b['crps_naive']} CI={b['crps_gain_ci95']} "
+              f"family={b['count_model'].get('family')}")
     return 1 if failed else 0
 
 

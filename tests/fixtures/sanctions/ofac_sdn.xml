@@ -1,0 +1,42 @@
+<?xml version="1.0" standalone="yes"?>
+<!-- Synthetic fixture for tests/test_sanctions.py: invented names and numbers, OFAC legacy XML shape. -->
+<sdnList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports/XML">
+  <publshInformation>
+    <Publish_Date>11/13/2026</Publish_Date>
+    <Record_Count>4</Record_Count>
+  </publshInformation>
+  <sdnEntry>
+    <uid>101</uid>
+    <lastName>EXAMPLE SHIPPING CO</lastName>
+    <sdnType>Entity</sdnType>
+    <programList><program>IRAN</program></programList>
+    <idList><id><uid>1</uid><idType>Company Number</idType><idNumber>IMO 5000000</idNumber></id></idList>
+  </sdnEntry>
+  <sdnEntry>
+    <uid>102</uid>
+    <lastName>TEST TANKER ONE</lastName>
+    <sdnType>Vessel</sdnType>
+    <remarks>(Linked To: EXAMPLE SHIPPING CO)</remarks>
+    <programList><program>IRAN</program><program>SDGT</program></programList>
+    <akaList><aka><uid>2</uid><type>f.k.a.</type><category>strong</category><lastName>OLD TEST NAME</lastName></aka></akaList>
+    <idList>
+      <id><uid>3</uid><idType>Vessel Registration Identification</idType><idNumber>IMO 1234567</idNumber></id>
+      <id><uid>4</uid><idType>MMSI</idType><idNumber>111222333</idNumber></id>
+    </idList>
+    <vesselInfo><vesselType>Crude Oil Tanker</vesselType><vesselFlag>Panama</vesselFlag></vesselInfo>
+  </sdnEntry>
+  <sdnEntry>
+    <uid>103</uid>
+    <lastName>TEST TUG BAD DIGIT</lastName>
+    <sdnType>Vessel</sdnType>
+    <programList><program>CUBA</program></programList>
+    <idList><id><uid>5</uid><idType>Vessel Registration Identification</idType><idNumber>IMO 1234568</idNumber></id></idList>
+    <vesselInfo><vesselFlag>Cuba</vesselFlag><vesselOwner>Example Owner S.A.</vesselOwner></vesselInfo>
+  </sdnEntry>
+  <sdnEntry>
+    <uid>104</uid>
+    <lastName>TEST BARGE NO IMO</lastName>
+    <sdnType>Vessel</sdnType>
+    <programList><program>CUBA</program></programList>
+  </sdnEntry>
+</sdnList>

@@ -107,6 +107,27 @@ Extra fields written by `scripts/forecast.py` (#3), all optional for the page:
 | `baseline` | `{mean_per_day, period, label}`: the pre-crisis reference the regime uses |
 | `last_data_date` | Last settled PortWatch day; forecast dates start the day after |
 
+Since #27 (18 Nov 2026) "the model" is the strait-level **count model** in
+`scripts/strait_model.py`: negative binomial, or Poisson when a dispersion test finds no
+overdispersion, on recent level, trend, weekday, regime and independently reported
+incidents; per-type forecasts are the total times a smoothed type share. The choice
+rule and the existing fields are unchanged, so the page needs no change. When the model
+is shown, `daily[].p10/p50/p90` can differ from day to day (weekday effect). New optional
+fields:
+
+| Field | Meaning |
+|---|---|
+| `target_note` | Plain sentence: the forecast is of PortWatch's AIS-based count (the settlement series), not true traffic |
+| `backtest.model_kind` | `count_glm` |
+| `backtest.half_life_days` | Now the count model's training-weight half-life (days) |
+| `backtest.crps_model`, `crps_naive` | Mean CRPS on `backtest.window` (proper score for the whole predictive distribution; lower is better, ships/day) |
+| `backtest.crps_gain`, `crps_gain_ci95` | Naive CRPS minus model CRPS and its block-bootstrap 95% CI. For the **total** the decision stays on MAE (fixed beforehand). **Per type** (decision 18 Nov) the model is shown only if both the MAE and the CRPS gain CIs are entirely above 0 **and** the out-of-sample check confirms it; `by_type.<type>.backtest.rule` says which rule applied |
+| `backtest.log_score_model` | Mean negative log predictive probability of the model (lower is better) |
+| `backtest.coverage_80_model`, `coverage_80_naive` | Share of outcomes inside p10-p90, for each method |
+| `backtest.count_model` | `{family, alpha, dispersion_z, train_rows, train_weight_half_life_days, coefficients}` as fitted at the issue date (`share` added per type) |
+| `backtest.models_compared` | MAE / coverage (/ CRPS) of `count_model`, `naive_ma7`, `naive_last` and the earlier `ewma` model, all on `backtest.window` |
+| `by_type.<type>.backtest.outcome` | Also `not_confirmed_out_of_sample` (decision 18 Nov): the model won on the latest window but the out-of-sample check (tune on TUNE, choose on SELECT, score on REPORT) did not confirm it, so the baseline is shown |
+
 ## rules.json  (hand-curated)
 
 One row per market family. **Replace the `example: true` row**; rows with `example: true`

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- Synthetic fixture: invented names and numbers, EU FSF XML shape. -->
+<export xmlns="http://eu.europa.ec/fpi/fsd/export" generationDate="2026-10-23T17:05:43.888+02:00" globalFileId="1">
+  <sanctionEntity euReferenceNumber="EU.1.1" logicalId="1">
+    <regulation publicationDate="2017-08-10" programme="PRK" logicalId="10"/>
+    <regulation publicationDate="2016-03-01" programme="PRK" logicalId="11"/>
+    <subjectType code="enterprise" classificationCode="E"/>
+    <nameAlias wholeName="Example Ocean Shipping Co" logicalId="12"/>
+    <identification identificationTypeCode="imo" number="5555555" logicalId="13"/>
+  </sanctionEntity>
+  <sanctionEntity euReferenceNumber="EU.2.2" logicalId="2">
+    <regulation publicationDate="2020-01-01" programme="SYR" logicalId="20"/>
+    <subjectType code="person" classificationCode="P"/>
+    <nameAlias wholeName="Example Person" logicalId="21"/>
+  </sanctionEntity>
+</export>

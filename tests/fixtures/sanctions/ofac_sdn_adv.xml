@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!-- Synthetic fixture: only the SanctionsEntry/EntryEvent dates the script reads. -->
+<Sanctions xmlns="https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports/ADVANCED_XML">
+  <SanctionsEntries>
+    <SanctionsEntry ID="102" ProfileID="102" ListID="1550">
+      <EntryEvent ID="102" EntryEventTypeID="1" LegalBasisID="1"><Comment /><Date CalendarTypeID="1"><Year>2025</Year><Month>2</Month><Day>24</Day></Date></EntryEvent>
+    </SanctionsEntry>
+    <SanctionsEntry ID="103" ProfileID="103" ListID="1550">
+      <EntryEvent ID="103" EntryEventTypeID="1" LegalBasisID="1"><Comment /><Date CalendarTypeID="1"><Year>1996</Year><Month>9</Month><Day>1</Day></Date></EntryEvent>
+    </SanctionsEntry>
+  </SanctionsEntries>
+</Sanctions>
