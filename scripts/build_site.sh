@@ -3,6 +3,7 @@
 set -euo pipefail
 rm -rf public && mkdir -p public/data
 cp index.html styles.css app.js public/
+cp -r fonts public/fonts
 cp -r data/transits data/forecast public/data/
 cp data/rules.json data/ledger.json public/data/
 echo "built public/: $(find public -type f | wc -l) files"
