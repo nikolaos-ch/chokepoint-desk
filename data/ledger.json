@@ -1,9 +1,231 @@
 {
  "schema_version": 1,
- "updated_at": "2026-11-17",
+ "updated_at": "2026-11-23",
  "window_days": 14,
- "note": "Approved by the analyst on 2026-11-17 (ticket #14). Status rule: claimed_only = only a party to the conflict says it; third_party_report = one independent source; confirmed = more than one. JMIC counts as a second source only when it adds information beyond relaying UKMTO; a non-party government counts as independent. No Bab el-Mandeb incidents in the window.",
+ "note": "Approved by the user on 23 Nov 2026 (weekly refresh, ticket #16): Q1 207-26 re-labelled confirmed; Q2 updated_at stays 2026-11-23; Q3 Iranian claims kept as separate claimed_only rows; Q4 NAVIG8 MESSI as drafted (JMIC date and place, both accounts); Q5 17 Nov claims row re-sourced to a single story; Q6 approved as drafted. Status rule: claimed_only = only a party to the conflict says it; third_party_report = one independent source; confirmed = more than one. JMIC counts as a second source only when it adds information beyond relaying UKMTO; a non-party government counts as independent. No Bab el-Mandeb incidents in the window.",
  "rows": [
+  {
+   "id": "hormuz-2026-11-22-iran-supertanker-mine-claims",
+   "example": false,
+   "strait": "hormuz",
+   "date": "2026-11-22",
+   "place": "North of Ghanam (Al Ghanam) Island and east of the Strait of Hormuz (no positions given)",
+   "summary": "IRGC Navy says two supertankers on 'unauthorized routes' suffered explosions and were brought to a halt after hitting naval mines north of Ghanam Island and east of the Strait of Hormuz. No vessel, flag or crew identified.",
+   "claimed_by": "IRGC Navy (via Fars), via Iranian state media",
+   "independent_source": null,
+   "status": "claimed_only",
+   "links": [
+    {
+     "label": "Anadolu, 22 Nov: Iran says 2 supertankers struck naval mines near Strait of Hormuz",
+     "url": "https://aa.com.tr/en/middle-east/iran-says-2-supertankers-struck-naval-mines-near-strait-of-hormuz/4133736"
+    },
+    {
+     "label": "ABC News live updates, 22 Nov: IRGC navy says two tankers 'exploded and stopped' after hitting mines",
+     "url": "https://abcnews.com/International/live-updates/iran-live-updates-tanker-attacked-strait-hormuz-ukmto/?id=138171071"
+    }
+   ],
+   "verified_on": "2026-11-23"
+  },
+  {
+   "id": "hormuz-2026-11-21-ukmto216-arina",
+   "example": false,
+   "strait": "hormuz",
+   "date": "2026-11-21",
+   "place": "About 17 nm east of Khasab, Oman",
+   "summary": "Outbound tanker ARINA struck in the engine room by an unknown projectile at about 0550 UTC, some 50 minutes after the TORKEL strike; no casualties reported, environmental impact unknown.",
+   "claimed_by": "Reported to UKMTO (Warning 216-26); vessel named in JMIC Update 116, which also lists a separate MSCIO report (191/26)",
+   "independent_source": "UKMTO Warning 216-26; MSCIO 191/26 (per JMIC Update 116)",
+   "status": "confirmed",
+   "links": [
+    {
+     "label": "UKMTO Recent Incidents (all warnings, newest first)",
+     "url": "https://www.ukmto.org/recent-incidents"
+    },
+    {
+     "label": "JMIC Advisory Update 116 (to 22 Nov), confirmed incidents list",
+     "url": "https://www.ukmto.org/-/media/ukmto/products/jmic_advisory_update_116_22-nov.pdf"
+    },
+    {
+     "label": "Maritime Executive, 22 Nov: two more tankers hit off Oman",
+     "url": "https://maritime-executive.com/article/two-more-tankers-hit-off-oman-as-houthis-threaten-saudi-red-sea-ports"
+    },
+    {
+     "label": "Jerusalem Post (Reuters), 21 Nov: UKMTO reports two tanker strikes near Khasab; Iran claims a mine hit",
+     "url": "https://www.jpost.com/middle-east/article-915628"
+    }
+   ],
+   "verified_on": "2026-11-23"
+  },
+  {
+   "id": "hormuz-2026-11-21-ukmto215-torkel",
+   "example": false,
+   "strait": "hormuz",
+   "date": "2026-11-21",
+   "place": "About 11 nm north of Khasab, Oman",
+   "summary": "Outbound tanker TORKEL struck on the stern by an unknown projectile at about 0500 UTC, causing a fire; later reported at anchor. No casualties reported, environmental impact unknown.",
+   "claimed_by": "Reported to UKMTO (Warning 215-26); vessel named by NAVAREA IX and separately reported by MSCIO (190/26), per JMIC Update 116",
+   "independent_source": "UKMTO Warning 215-26; NAVAREA IX; MSCIO 190/26 (per JMIC Update 116)",
+   "status": "confirmed",
+   "links": [
+    {
+     "label": "UKMTO Recent Incidents (all warnings, newest first)",
+     "url": "https://www.ukmto.org/recent-incidents"
+    },
+    {
+     "label": "JMIC Advisory Update 116 (to 22 Nov), confirmed incidents list",
+     "url": "https://www.ukmto.org/-/media/ukmto/products/jmic_advisory_update_116_22-nov.pdf"
+    },
+    {
+     "label": "Jerusalem Post (Reuters), 21 Nov: UKMTO reports two tanker strikes near Khasab; Iran claims a mine hit",
+     "url": "https://www.jpost.com/middle-east/article-915628"
+    },
+    {
+     "label": "Gulf News, 22 Nov: three tankers struck near Oman",
+     "url": "https://gulfnews.com/world/mena/iran-attacks-on-gulf-shipping-hit-highest-levels-since-conflict-began-why-strait-of-hormuz-is-on-alert-1.500757611"
+    }
+   ],
+   "verified_on": "2026-11-23"
+  },
+  {
+   "id": "hormuz-2026-11-21-iran-mine-claims",
+   "example": false,
+   "strait": "hormuz",
+   "date": "2026-11-21",
+   "place": "Restricted area in the eastern Strait of Hormuz (no position given)",
+   "summary": "The IRGC Navy (Anadolu) and Iran's navy (Reuters) say an oil tanker caught fire after hitting a naval mine in a restricted area east of the Strait of Hormuz. No vessel identified.",
+   "claimed_by": "IRGC Navy (per Anadolu) and Iran's navy (per Reuters), via Iranian state media",
+   "independent_source": null,
+   "status": "claimed_only",
+   "links": [
+    {
+     "label": "Anadolu, 21 Nov: Iran says oil tanker catches fire after hitting mine in Strait of Hormuz",
+     "url": "https://www.aa.com.tr/en/middle-east/iran-says-oil-tanker-catches-fire-after-hitting-mine-in-strait-of-hormuz/4133044"
+    },
+    {
+     "label": "Jerusalem Post (Reuters), 21 Nov: UKMTO reports two tanker strikes near Khasab; Iran claims a mine hit",
+     "url": "https://www.jpost.com/middle-east/article-915628"
+    }
+   ],
+   "verified_on": "2026-11-23"
+  },
+  {
+   "id": "hormuz-2026-11-20-ukmto214",
+   "example": false,
+   "strait": "hormuz",
+   "date": "2026-11-20",
+   "place": "About 8 nm north of Khasab, Oman",
+   "summary": "Outbound tanker struck on the port bow by an unknown projectile at about 1500 UTC; the Company Security Officer reported a fire on board. No casualties or environmental impact reported.",
+   "claimed_by": "Tanker's Company Security Officer, reported to UKMTO (Warning 214-26); separately reported by MSCIO (189/26), per JMIC Update 116",
+   "independent_source": "UKMTO Warning 214-26; MSCIO 189/26 (per JMIC Update 116)",
+   "status": "confirmed",
+   "links": [
+    {
+     "label": "UKMTO Recent Incidents (all warnings, newest first)",
+     "url": "https://www.ukmto.org/recent-incidents"
+    },
+    {
+     "label": "JMIC Advisory Update 116 (to 22 Nov), confirmed incidents list",
+     "url": "https://www.ukmto.org/-/media/ukmto/products/jmic_advisory_update_116_22-nov.pdf"
+    },
+    {
+     "label": "Reuters via Yahoo, 21 Nov: UK maritime agency reports tanker incidents near Oman (mentions Friday's strike)",
+     "url": "https://www.yahoo.com/news/articles/tanker-hit-unknown-projectile-near-075656148.html"
+    }
+   ],
+   "verified_on": "2026-11-23"
+  },
+  {
+   "id": "hormuz-2026-11-19-iran-supertanker-mine-claims",
+   "example": false,
+   "strait": "hormuz",
+   "date": "2026-11-19",
+   "place": "Southern Strait of Hormuz, near Oman's coast; 'restricted zone' east of the strait (Iranian wording)",
+   "summary": "IRGC Navy says two supertankers carrying over 4 million barrels of crude hit mines on an 'unauthorized route' and were still burning; Iran's army separately says an oil tanker struck mines near the 'restricted zone'. No vessel, flag or crew identified; not independently verified.",
+   "claimed_by": "IRGC Navy and Iran's army (Artesh), via Iranian state media",
+   "independent_source": null,
+   "status": "claimed_only",
+   "links": [
+    {
+     "label": "Al-Monitor, 19 Nov: Iran's IRGC says tankers with 4M barrels of oil hit Hormuz mines",
+     "url": "https://www.al-monitor.com/originals/2026/11/irans-irgc-says-tankers-4m-barrels-oil-hit-hormuz-mines-what-know"
+    },
+    {
+     "label": "The New Region, 19 Nov: Iranian army says oil tanker struck by naval mines near 'restricted zone'",
+     "url": "https://thenewregion.com/posts/7161/iranian-army-says-oil-tanker-struck-by-naval-mines-near-hormuz-s-restricted-zone"
+    }
+   ],
+   "verified_on": "2026-11-23"
+  },
+  {
+   "id": "hormuz-2026-11-18-ukmto212",
+   "example": false,
+   "strait": "hormuz",
+   "date": "2026-11-18",
+   "place": "About 6 nm north of Khasab, Oman",
+   "summary": "Outbound tanker struck in the engine room by an unknown projectile (time-late report); crew safe, damage and environmental impact unknown.",
+   "claimed_by": "Reported to UKMTO (Warning 212-26); separately reported by MSCIO (187/26), per JMIC Update 115",
+   "independent_source": "UKMTO Warning 212-26; MSCIO 187/26 (per JMIC Update 115)",
+   "status": "confirmed",
+   "links": [
+    {
+     "label": "UKMTO Recent Incidents (all warnings, newest first)",
+     "url": "https://www.ukmto.org/recent-incidents"
+    },
+    {
+     "label": "JMIC Advisory Update 115 (to 19 Nov), confirmed incidents list",
+     "url": "https://www.ukmto.org/-/media/ukmto/products/jmic_advisory_update_115_19-nov.pdf?rev=f6fa43a53963463e9048425c3d80f419"
+    }
+   ],
+   "verified_on": "2026-11-23"
+  },
+  {
+   "id": "hormuz-2026-11-17-ukmto211-navig8-messi",
+   "example": false,
+   "strait": "hormuz",
+   "date": "2026-11-17",
+   "place": "About 13 nm north of Khasab, Oman",
+   "summary": "Outbound product tanker (named NAVIG8 MESSI by India's Minister of Ports) struck by an unknown projectile; fire later extinguished, vessel under tow. ADNOC says one crew member is missing and 11 injured. Accounts differ: India's minister dated it 18 Nov, placed it 'in the Persian Gulf while approaching the Strait' and said all crew were safe.",
+   "claimed_by": "Local authorities, reported to UKMTO (Warning 211-26, time-late); Government of India (Minister Sarbananda Sonowal); ADNOC (vessel's owner)",
+   "independent_source": "UKMTO Warning 211-26; Government of India (Minister of Ports, Shipping and Waterways)",
+   "status": "confirmed",
+   "links": [
+    {
+     "label": "UKMTO Recent Incidents (all warnings, newest first)",
+     "url": "https://www.ukmto.org/recent-incidents"
+    },
+    {
+     "label": "JMIC Advisory Update 115 (to 19 Nov), confirmed incidents list",
+     "url": "https://www.ukmto.org/-/media/ukmto/products/jmic_advisory_update_115_19-nov.pdf?rev=f6fa43a53963463e9048425c3d80f419"
+    },
+    {
+     "label": "Maritime Executive, 18 Nov: seafarer missing as Iran continues attacks on ADNOC tankers",
+     "url": "https://maritime-executive.com/article/seafarer-is-missing-as-iran-continues-attacks-on-adnoc-tankers"
+    },
+    {
+     "label": "ETV Bharat, 18 Nov: Sonowal says tanker with 3 Indian seafarers hit, all crew safe",
+     "url": "https://www.etvbharat.com/en/bharat/liberia-flagged-tanker-with-3-indian-seafarers-hit-by-projectile-in-persian-gulf-all-crew-safe-sonowal-enn26111806390"
+    }
+   ],
+   "verified_on": "2026-11-23"
+  },
+  {
+   "id": "hormuz-2026-11-17-iran-mine-claims",
+   "example": false,
+   "strait": "hormuz",
+   "date": "2026-11-17",
+   "place": "Eastern part of the Strait of Hormuz (no position given)",
+   "summary": "Iran's Navy says three oil tankers caught fire after striking naval mines since early 17 Nov, the third in the eastern part of the strait, suspected of violating 'maritime navigation rules'. No vessel identified.",
+   "claimed_by": "Iran's Navy, via Iranian state media",
+   "independent_source": null,
+   "status": "claimed_only",
+   "links": [
+    {
+     "label": "Anadolu, 17 Nov: Iranian navy says 3rd oil tanker catches fire after hitting mine in Strait of Hormuz",
+     "url": "https://www.aa.com.tr/en/middle-east/iranian-navy-says-3rd-oil-tanker-catches-fire-after-hitting-mine-in-strait-of-hormuz/4128076"
+    }
+   ],
+   "verified_on": "2026-11-23"
+  },
   {
    "id": "hormuz-2026-11-16-ukmto208-tara-gas",
    "example": false,
@@ -20,6 +242,10 @@
      "url": "https://www.ukmto.org/-/media/ukmto/products/20261116-ukmto_warning_208-26.pdf?rev=29246f8ab7714c10a7668e09cddcac15"
     },
     {
+     "label": "JMIC Advisory Update 115 (to 19 Nov), confirmed incidents list",
+     "url": "https://www.ukmto.org/-/media/ukmto/products/jmic_advisory_update_115_19-nov.pdf?rev=f6fa43a53963463e9048425c3d80f419"
+    },
+    {
      "label": "gCaptain, 17 Nov: second strike on LPG tanker TARA GAS",
      "url": "https://gcaptain.com/second-strike-on-lpg-tanker-in-strait-of-hormuz-leaves-one-missing-two-injured/"
     },
@@ -28,7 +254,7 @@
      "url": "https://www.ukmto.org/recent-incidents"
     }
    ],
-   "verified_on": "2026-11-17"
+   "verified_on": "2026-11-23"
   },
   {
    "id": "hormuz-2026-11-16-ukmto207",
@@ -36,21 +262,25 @@
    "strait": "hormuz",
    "date": "2026-11-16",
    "place": "Strait of Hormuz, outbound lane",
-   "summary": "Tanker struck by an unknown projectile while transiting outbound (about 0558 UTC); engine-room fire, all crew accounted for.",
-   "claimed_by": "Tanker's Company Security Officer, reported to UKMTO (Warning 207-26)",
-   "independent_source": "UKMTO Warning 207-26",
-   "status": "third_party_report",
+   "summary": "Tanker (named ON PHOENIX by NAVAREA IX) struck by an unknown projectile while transiting outbound (about 0558 UTC); engine-room fire, all crew accounted for.",
+   "claimed_by": "Tanker's Company Security Officer, reported to UKMTO (Warning 207-26); vessel named by NAVAREA IX, per JMIC Update 115",
+   "independent_source": "UKMTO Warning 207-26; NAVAREA IX (per JMIC Update 115)",
+   "status": "confirmed",
    "links": [
     {
      "label": "UKMTO Recent Incidents (all warnings, newest first)",
      "url": "https://www.ukmto.org/recent-incidents"
     },
     {
+     "label": "JMIC Advisory Update 115 (to 19 Nov), confirmed incidents list",
+     "url": "https://www.ukmto.org/-/media/ukmto/products/jmic_advisory_update_115_19-nov.pdf?rev=f6fa43a53963463e9048425c3d80f419"
+    },
+    {
      "label": "gCaptain, 16 Nov: UKMTO reports two tanker attacks in Strait of Hormuz",
      "url": "https://gcaptain.com/ukmto-reports-two-tanker-attacks-in-strait-of-hormuz/"
     }
    ],
-   "verified_on": "2026-11-17"
+   "verified_on": "2026-11-23"
   },
   {
    "id": "hormuz-2026-11-15-iran-mine-claims",
@@ -76,7 +306,7 @@
      "url": "https://www.aljazeera.com/video/newsfeed/2026/11/17/vessels-on-fire-after-naval-mine-hit-in-hormuz-strait-iran-says"
     }
    ],
-   "verified_on": "2026-11-17"
+   "verified_on": "2026-11-23"
   },
   {
    "id": "hormuz-2026-11-14-iran-navy-mine",
@@ -94,7 +324,7 @@
      "url": "https://www.jpost.com/middle-east/iran-news/article-914859"
     }
    ],
-   "verified_on": "2026-11-17"
+   "verified_on": "2026-11-23"
   },
   {
    "id": "hormuz-2026-11-11-ukmto202-ncc-fajr",
@@ -116,7 +346,7 @@
      "url": "https://www.ukmto.org/-/media/ukmto/products/jmic_advisory_update_113_12-nov.pdf"
     }
    ],
-   "verified_on": "2026-11-17"
+   "verified_on": "2026-11-23"
   },
   {
    "id": "hormuz-2026-11-10-ukmto201",
@@ -138,117 +368,7 @@
      "url": "https://www.ukmto.org/-/media/ukmto/products/jmic_advisory_update_113_12-nov.pdf"
     }
    ],
-   "verified_on": "2026-11-17"
-  },
-  {
-   "id": "hormuz-2026-11-07-ukmto200",
-   "example": false,
-   "strait": "hormuz",
-   "date": "2026-11-07",
-   "place": "Strait of Hormuz, outbound lane",
-   "summary": "Tanker struck by an unknown projectile while transiting outbound; crew safe and accounted for (reported late, on 8 Nov).",
-   "claimed_by": "Tanker's Company Security Officer, reported to UKMTO (Warning 200-26)",
-   "independent_source": "UKMTO Warning 200-26",
-   "status": "third_party_report",
-   "links": [
-    {
-     "label": "UKMTO Recent Incidents (all warnings, newest first)",
-     "url": "https://www.ukmto.org/recent-incidents"
-    },
-    {
-     "label": "JMIC Advisory Update 112 (to 08 Nov), confirmed incidents list",
-     "url": "https://www.ukmto.org/-/media/ukmto/products/jmic_advisory_update_112_08-nov.pdf"
-    }
-   ],
-   "verified_on": "2026-11-17"
-  },
-  {
-   "id": "hormuz-2026-11-07-ukmto199",
-   "example": false,
-   "strait": "hormuz",
-   "date": "2026-11-07",
-   "place": "About 8 nm northwest of Khasab, Oman",
-   "summary": "Tanker on fire and crew evacuated; UKMTO reclassified it as an attack (reported late, on 8 Nov).",
-   "claimed_by": "Military authorities, reported to UKMTO (Warning 199-26)",
-   "independent_source": "UKMTO Warning 199-26",
-   "status": "third_party_report",
-   "links": [
-    {
-     "label": "UKMTO Recent Incidents (all warnings, newest first)",
-     "url": "https://www.ukmto.org/recent-incidents"
-    },
-    {
-     "label": "JMIC Advisory Update 112 (to 08 Nov), confirmed incidents list",
-     "url": "https://www.ukmto.org/-/media/ukmto/products/jmic_advisory_update_112_08-nov.pdf"
-    }
-   ],
-   "verified_on": "2026-11-17"
-  },
-  {
-   "id": "hormuz-2026-11-05-ukmto197",
-   "example": false,
-   "strait": "hormuz",
-   "date": "2026-11-05",
-   "place": "About 16 nm east of Khasab, Oman",
-   "summary": "Outbound tanker reported an explosion at the waterline, port side; crew safe, vessel continued its voyage.",
-   "claimed_by": "Tanker's Master, reported to UKMTO (Warning 197-26) and separately to MSCIO (171/26)",
-   "independent_source": "UKMTO Warning 197-26; MSCIO 171/26 (per JMIC Update 112)",
-   "status": "confirmed",
-   "links": [
-    {
-     "label": "UKMTO Recent Incidents (all warnings, newest first)",
-     "url": "https://www.ukmto.org/recent-incidents"
-    },
-    {
-     "label": "JMIC Advisory Update 112 (to 08 Nov), confirmed incidents list",
-     "url": "https://www.ukmto.org/-/media/ukmto/products/jmic_advisory_update_112_08-nov.pdf"
-    }
-   ],
-   "verified_on": "2026-11-17"
-  },
-  {
-   "id": "hormuz-2026-11-03-ukmto195",
-   "example": false,
-   "strait": "hormuz",
-   "date": "2026-11-03",
-   "place": "About 14 nm northeast of Lima, Oman",
-   "summary": "Tanker struck by two unknown projectiles in the engine room; no casualties reported.",
-   "claimed_by": "Tanker's Company Security Officer, reported to UKMTO (Warning 195-26)",
-   "independent_source": "UKMTO Warning 195-26",
-   "status": "third_party_report",
-   "links": [
-    {
-     "label": "UKMTO Recent Incidents (all warnings, newest first)",
-     "url": "https://www.ukmto.org/recent-incidents"
-    },
-    {
-     "label": "JMIC Advisory Update 111 (to 05 Nov), confirmed incidents list",
-     "url": "https://www.ukmto.org/-/media/ukmto/products/jmic_advisory_update_111_05-nov.pdf?rev=de54e3b88ef24dd3a3c3cb0a215b1acf"
-    }
-   ],
-   "verified_on": "2026-11-17"
-  },
-  {
-   "id": "hormuz-2026-11-02-ukmto194-dhow",
-   "example": false,
-   "strait": "hormuz",
-   "date": "2026-11-02",
-   "place": "Strait of Hormuz, outbound",
-   "summary": "Indian-crewed dhow MSV ALJUSUFI attacked; Royal Navy of Oman rescued survivors. Indian officials report 1 crew member killed and 13 rescued.",
-   "claimed_by": "Government of India (Ministry of External Affairs), reported to UKMTO (Warning 194-26, issued 3 Nov)",
-   "independent_source": "UKMTO Warning 194-26; Government of India (Ministry of External Affairs, per JMIC Update 111)",
-   "status": "confirmed",
-   "links": [
-    {
-     "label": "UKMTO Recent Incidents (all warnings, newest first)",
-     "url": "https://www.ukmto.org/recent-incidents"
-    },
-    {
-     "label": "JMIC Advisory Update 111 (to 05 Nov), confirmed incidents list",
-     "url": "https://www.ukmto.org/-/media/ukmto/products/jmic_advisory_update_111_05-nov.pdf?rev=de54e3b88ef24dd3a3c3cb0a215b1acf"
-    }
-   ],
-   "verified_on": "2026-11-17"
+   "verified_on": "2026-11-23"
   }
  ]
 }

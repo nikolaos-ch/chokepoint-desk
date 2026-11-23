@@ -32,8 +32,12 @@ applies no rule of its own. It reads:
 The backend must keep these three consistent (no "No meaningful difference" with
 `method_used: model`); the page shows them exactly as given.
 
-Stale data (D7): if `last_data_date` is more than 7 days before the viewer's clock, the page
-shows a red "Stale data" notice under the data stamp.
+Stale data (D7): IMF PortWatch publishes weekly (Tuesdays, about 9 AM New York time), so data
+a week old is normal. If `last_data_date` is 0–10 days before the viewer's clock, the page shows
+a neutral note under the data stamp naming the weekly release and the next expected Tuesday
+(worked out from the viewer's clock: the first Tuesday from today that falls more than two days
+after `last_data_date`). If it is more than 10 days old, the page shows a red "Stale data"
+notice saying the refresh may have failed.
 
 ---
 

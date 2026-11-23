@@ -176,6 +176,7 @@ main section { scroll-margin-top: 84px; }
 .chart-hint { font-size: 12px; color: var(--text-3); margin-top: 4px; }
 .stale-note { display: block; margin-top: 8px; border: 1px solid rgba(242, 85, 90, 0.45); background: var(--critical-bg); color: var(--text-1); padding: 8px 12px; border-radius: var(--radius-sm); }
 .stale-note::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--critical); margin-right: 8px; vertical-align: 1px; }
+.cadence-note { display: block; margin-top: 4px; color: var(--text-2); }
 .fine-print { font-size: 12px; color: var(--text-3); margin-top: 8px; }
 
 .tooltip { position: fixed; z-index: 20; pointer-events: none; background: var(--surface-2); color: var(--text-1); border: 1px solid var(--border-strong); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 12.5px; box-shadow: 0 8px 28px rgba(0,0,0,.5); min-width: 160px; max-width: 240px; }

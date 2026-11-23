@@ -682,14 +682,31 @@
 
   function sortedDaily(F) { return (F.daily || []).slice().sort(function (a, b) { return a.date < b.date ? -1 : 1; }); }
 
-  // D7: say so plainly when the newest count is more than a week old.
-  var STALE_DAYS = 7;
-  function staleNote(lastDate) {
+  // D7: PortWatch publishes weekly (Tuesdays, about 9 AM New York time), so a newest count
+  // up to STALE_DAYS old is normal and gets a calm note; older than that, a red warning.
+  var STALE_DAYS = 10;
+  var fmtWeekday = new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
+  // Next expected release: the first Tuesday from today (UTC) that comes more than two days
+  // after the newest count (a Tuesday release runs to about the Sunday before it).
+  function nextRelease(lastDay, now) {
+    var t = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+    t.setUTCDate(t.getUTCDate() + (9 - t.getUTCDay()) % 7);
+    while (t.getTime() - lastDay.getTime() <= 2 * 864e5) t.setUTCDate(t.getUTCDate() + 7);
+    return t;
+  }
+  function staleNote(lastDate, nowMs) {
     var d = parseDate(lastDate);
     if (!d) return '';
-    var age = Math.floor((Date.now() - d.getTime()) / 864e5);
-    if (age <= STALE_DAYS) return '';
-    return '<span class="stale-note" role="note"><strong>Stale data.</strong> The newest count is from ' + esc(day(lastDate)) + ', ' + age + ' days ago. The daily refresh may have failed; treat every number below as out of date.</span>';
+    var now = new Date(nowMs == null ? Date.now() : nowMs);
+    var age = Math.max(0, Math.floor((now.getTime() - d.getTime()) / 864e5));
+    if (age > STALE_DAYS) {
+      return '<span class="stale-note" role="note"><strong>Stale data.</strong> The newest count is from ' + esc(day(lastDate)) + ', ' + age + ' days ago, longer than PortWatch\'s weekly cycle. The daily refresh may have failed; treat every number below as out of date.</span>';
+    }
+    var ago = age === 0 ? 'today' : age === 1 ? '1 day ago' : age + ' days ago';
+    var rel = nextRelease(d, now);
+    var today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+    var when = rel.getTime() === today.getTime() ? 'today (Tuesday)' : fmtWeekday.format(rel).replace(',', '');
+    return '<span class="cadence-note" role="note">PortWatch publishes weekly; the newest count is from ' + esc(dayShort(lastDate)) + ' (' + ago + '). Next release expected ' + esc(when) + '.</span>';
   }
 
   // The full daily table (thousands of rows) is only built when someone opens it.
