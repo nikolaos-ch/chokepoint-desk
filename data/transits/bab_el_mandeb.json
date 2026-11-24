@@ -4,9 +4,9 @@
  "portwatch_id": "chokepoint4",
  "source": "IMF PortWatch, Daily Chokepoints Data (portwatch.imf.org)",
  "source_url": "https://services9.arcgis.com/weJ1QsnbMYJlCHdG/arcgis/rest/services/Daily_Chokepoints_Data/FeatureServer/0",
- "fetched_at": "2026-11-17T23:15:13Z",
+ "fetched_at": "2026-11-24T15:32:42Z",
  "offline": false,
- "last_data_date": "2026-11-15",
+ "last_data_date": "2026-11-22",
  "first_data_date": "2019-01-01",
  "missing_dates": [],
  "daily": [
@@ -34521,6 +34521,90 @@
     "tanker": 9
    },
    "ma7": 25.57
+  },
+  {
+   "date": "2026-11-16",
+   "total": 36,
+   "by_type": {
+    "container": 7,
+    "dry_bulk": 11,
+    "general_cargo": 6,
+    "roro": 0,
+    "tanker": 12
+   },
+   "ma7": 26.57
+  },
+  {
+   "date": "2026-11-17",
+   "total": 25,
+   "by_type": {
+    "container": 4,
+    "dry_bulk": 11,
+    "general_cargo": 1,
+    "roro": 0,
+    "tanker": 9
+   },
+   "ma7": 26.57
+  },
+  {
+   "date": "2026-11-18",
+   "total": 25,
+   "by_type": {
+    "container": 6,
+    "dry_bulk": 9,
+    "general_cargo": 3,
+    "roro": 2,
+    "tanker": 5
+   },
+   "ma7": 27.43
+  },
+  {
+   "date": "2026-11-19",
+   "total": 23,
+   "by_type": {
+    "container": 5,
+    "dry_bulk": 6,
+    "general_cargo": 4,
+    "roro": 0,
+    "tanker": 8
+   },
+   "ma7": 27.29
+  },
+  {
+   "date": "2026-11-20",
+   "total": 28,
+   "by_type": {
+    "container": 6,
+    "dry_bulk": 8,
+    "general_cargo": 3,
+    "roro": 1,
+    "tanker": 10
+   },
+   "ma7": 27.29
+  },
+  {
+   "date": "2026-11-21",
+   "total": 32,
+   "by_type": {
+    "container": 6,
+    "dry_bulk": 7,
+    "general_cargo": 9,
+    "roro": 1,
+    "tanker": 9
+   },
+   "ma7": 29.0
+  },
+  {
+   "date": "2026-11-22",
+   "total": 20,
+   "by_type": {
+    "container": 3,
+    "dry_bulk": 7,
+    "general_cargo": 5,
+    "roro": 0,
+    "tanker": 5
+   },
+   "ma7": 27.0
   }
  ]
 }
